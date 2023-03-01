@@ -7,7 +7,7 @@ const app = express();
 const port = process.env.PORT ?? 3000;
 console.log(process.env.NODE_ENV);
 
-app.get('/', (req, res) => {
+app.get('/', (e, res) => {
   res.send('Hello World!');
 });
 

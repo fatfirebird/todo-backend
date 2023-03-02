@@ -13,6 +13,14 @@ class TaskRepository {
   static async createNewTask(data: Omit<Task, 'id'>) {
     return await TaskModel.create(data);
   }
+
+  static async deleteTask(id: string) {
+    return await TaskModel.destroy({
+      where: {
+        id,
+      },
+    });
+  }
 }
 
 export { TaskRepository };

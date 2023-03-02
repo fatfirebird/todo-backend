@@ -5,7 +5,7 @@ export abstract class BaseController {
     return res.status(code).json({ error });
   }
 
-  ok<T = unknown>(res: Response, data: T) {
+  ok<T = unknown>(res: Response, data?: T) {
     if (!data) {
       return res.sendStatus(201);
     } else {

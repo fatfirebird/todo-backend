@@ -49,6 +49,28 @@ class TaskController extends BaseController {
       return this.internalError(res, error);
     }
   }
+
+  async deleteTask(req: Request, res: Response) {
+    try {
+      const dto = {
+        id: req.query.id?.toString(),
+      };
+
+      if (!dto.id) {
+        return this.badRequest(res, 'ID doesnt exists');
+      }
+
+      const deletedTasks = await TaskRepository.deleteTask(dto.id);
+
+      if (!deletedTasks) {
+        return this.notFound(res, `Task with id: ${dto.id} doesnt exists`);
+      }
+
+      return this.ok(res);
+    } catch (error) {
+      return this.internalError(res, error);
+    }
+  }
 }
 
 const taskController = new TaskController();

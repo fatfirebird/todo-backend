@@ -20,6 +20,7 @@ TaskModel.init(
   },
   {
     sequelize,
+    paranoid: true,
   },
 );
 

@@ -1,7 +1,7 @@
 import { Response, Request } from 'express';
 import { BaseController } from '../core/base-controller';
 import { CreateTaskDTO, GetTaskDTO } from './task-dto';
-import { TaskModel } from './task-model';
+import { TaskRepository } from './task-repository';
 
 class TaskController extends BaseController {
   constructor() {
@@ -14,18 +14,14 @@ class TaskController extends BaseController {
         id: req.query.id?.toString(),
       };
 
-      if (dto.id) {
+      if (!dto.id) {
         return this.badRequest(res, 'ID doesnt exists');
       }
 
-      const task = await TaskModel.findOne({
-        where: {
-          id: req.query.id,
-        },
-      });
+      const task = await TaskRepository.findTaskById(dto.id);
 
       if (!task) {
-        return this.badRequest(res, 'ID doesnt exists');
+        return this.notFound(res, `Task with id: ${dto.id} doesnt exists`);
       }
 
       return this.ok(res, task.toJSON());
@@ -44,7 +40,7 @@ class TaskController extends BaseController {
         return this.badRequest(res, 'No text provided');
       }
 
-      const task = await TaskModel.create({
+      const task = await TaskRepository.createNewTask({
         text: dto.text,
       });
 

@@ -1,7 +1,8 @@
+import { Task } from './task-entity';
 import { TaskModel } from './task-model';
 
 class TaskRepository {
-  async findTaskById(id: string) {
+  static async findTaskById(id: string) {
     return await TaskModel.findOne({
       where: {
         id,
@@ -9,8 +10,7 @@ class TaskRepository {
     });
   }
 
-  // TODO: fix
-  async createNewTask(data: { task: string }) {
+  static async createNewTask(data: Omit<Task, 'id'>) {
     return await TaskModel.create(data);
   }
 }

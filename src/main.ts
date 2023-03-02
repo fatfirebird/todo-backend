@@ -1,19 +1,17 @@
-import { Sequelize } from 'sequelize';
 import { APP_CONFIG } from './config/application';
 import express, { Express } from 'express';
 import * as dotenv from 'dotenv';
 import { routerV1 } from './router/v1';
 import bodyParser from 'body-parser';
 import cors from 'cors';
+import { sequelize } from './database/config';
 
 export class App {
   private readonly app: Express;
-  private readonly sequelize: Sequelize;
 
   constructor() {
     dotenv.config();
     this.app = express();
-    this.sequelize = new Sequelize('sqlite::memory:');
 
     this.app.use(bodyParser.json());
     this.app.use(bodyParser.urlencoded({ extended: true }));
@@ -24,7 +22,7 @@ export class App {
 
   async bootsrap() {
     try {
-      await this.sequelize.authenticate();
+      await sequelize.authenticate();
       console.log('Connection has been established successfully.');
 
       this.app.listen(APP_CONFIG.PORT, () => {

@@ -43,7 +43,7 @@
     "prettier": "^2.8.4",
     "ts-jest": "^29.0.5",
     "ts-node": "^10.9.1",
-    "typescript": "*"
+    "typescript": "4.9.5"
   },
   "lint-staged": {
     "*.{js,ts}": [

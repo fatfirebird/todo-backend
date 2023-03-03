@@ -1,4 +1,4 @@
-import { Task } from './task-entity';
+import { Task, TaskStatus } from './task-entity';
 import { TaskModel } from './task-model';
 
 class TaskRepository {
@@ -20,6 +20,17 @@ class TaskRepository {
         id,
       },
     });
+  }
+
+  static async updateTaskStatus(id: string, status: TaskStatus) {
+    return await TaskModel.update(
+      { status },
+      {
+        where: {
+          id,
+        },
+      },
+    );
   }
 }
 

@@ -5,6 +5,8 @@ const taskRouter = Router();
 
 taskRouter.get('/', (req, res) => taskController.getTask(req, res));
 taskRouter.post('/', (req, res) => taskController.createTask(req, res));
-taskRouter.delete('/', (req, res) => taskController.deleteTask(req, res));
+taskRouter.delete('/:id', (req, res) => taskController.deleteTask(req, res));
+taskRouter.patch('/:id/take-to-work', (req, res) => taskController.takeTaskToWork(req, res));
+taskRouter.patch('/:id/done', (req, res) => taskController.doneTask(req, res));
 
 export { taskRouter };

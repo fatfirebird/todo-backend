@@ -1,7 +1,9 @@
 import { Response, Request } from 'express';
 import { BaseController } from '../core/base-controller';
 import { CreateTaskDTO, GetTaskDTO } from './task-dto';
+import { TaskStatus } from './task-entity';
 import { TaskRepository } from './task-repository';
+import { TaskService } from './task-service';
 
 class TaskController extends BaseController {
   constructor() {
@@ -53,7 +55,7 @@ class TaskController extends BaseController {
   async deleteTask(req: Request, res: Response) {
     try {
       const dto = {
-        id: req.query.id?.toString(),
+        id: req.params?.id,
       };
 
       if (!dto.id) {
@@ -65,6 +67,50 @@ class TaskController extends BaseController {
       if (!deletedTasks) {
         return this.notFound(res, `Task with id: ${dto.id} doesnt exists`);
       }
+
+      return this.ok(res);
+    } catch (error) {
+      return this.internalError(res, error);
+    }
+  }
+
+  async takeTaskToWork(req: Request, res: Response) {
+    try {
+      const id = req.params.id;
+
+      if (!id) {
+        return this.badRequest(res, 'ID doesnt exists');
+      }
+
+      const task = await TaskRepository.findTaskById(id);
+
+      if (!task) {
+        return this.notFound(res, `Task with id: ${id} doesnt exists`);
+      }
+
+      await TaskService.setTaskStatus(task, TaskStatus.inProgress);
+
+      return this.ok(res);
+    } catch (error) {
+      return this.internalError(res, error);
+    }
+  }
+
+  async doneTask(req: Request, res: Response) {
+    try {
+      const id = req.params.id;
+
+      if (!id) {
+        return this.badRequest(res, 'ID doesnt exists');
+      }
+
+      const task = await TaskRepository.findTaskById(id);
+
+      if (!task) {
+        return this.notFound(res, `Task with id: ${id} doesnt exists`);
+      }
+
+      await TaskService.setTaskStatus(task, TaskStatus.done);
 
       return this.ok(res);
     } catch (error) {

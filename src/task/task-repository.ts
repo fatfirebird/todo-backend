@@ -10,6 +10,13 @@ class TaskRepository {
     });
   }
 
+  static async findAllTasks({ offset, limit }: any) {
+    return TaskModel.findAll({
+      offset,
+      limit,
+    });
+  }
+
   static async createNewTask(data: Omit<Task, 'id'>) {
     return await TaskModel.create(data);
   }

@@ -10,10 +10,10 @@ class TaskController extends BaseController {
     super();
   }
 
-  async getTask(req: Request, res: Response): Promise<unknown> {
+  async getTask(req: Request, res: Response) {
     try {
       const dto: GetTaskDTO = {
-        id: req.query.id?.toString(),
+        id: req.params.id,
       };
 
       if (!dto.id) {
@@ -32,7 +32,22 @@ class TaskController extends BaseController {
     }
   }
 
-  async createTask(req: Request, res: Response): Promise<unknown> {
+  async getTaskList(req: Request, res: Response) {
+    try {
+      const meta = {
+        offset: req.query.offset ?? 0,
+        limit: req.query.limit ?? 10,
+      };
+
+      const tasks = await TaskRepository.findAllTasks(meta);
+
+      return this.ok(res, { tasks, meta });
+    } catch (error) {
+      return this.internalError(res, error);
+    }
+  }
+
+  async createTask(req: Request, res: Response) {
     try {
       const dto: CreateTaskDTO = {
         text: req.body.text,

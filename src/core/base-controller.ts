@@ -15,15 +15,15 @@ export abstract class BaseController {
   }
 
   protected badRequest(res: Response, error: HttpError) {
-    return this.sendError(res, 400, error ?? { message: 'Bad request' });
+    return this.sendError(res, 400, error);
   }
 
   protected notFound(res: Response, error: HttpError) {
-    return this.sendError(res, 404, error ?? { message: 'Not found' });
+    return this.sendError(res, 404, error);
   }
 
   protected internalError(res: Response, error?: HttpError) {
-    return this.sendError(res, 500, error ?? { message: 'Internal server error' });
+    return this.sendError(res, 500, error ?? new HttpError({ message: 'Internal server error' }));
   }
 
   protected handleCatchError(res: Response, error: unknown) {
@@ -32,7 +32,7 @@ export abstract class BaseController {
     }
 
     if (error instanceof Error) {
-      return this.internalError(res, { message: error?.message });
+      return this.internalError(res, { message: error.message });
     }
 
     return this.internalError(res);

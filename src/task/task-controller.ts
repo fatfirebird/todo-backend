@@ -23,7 +23,7 @@ class TaskController extends BaseController {
 
       return this.ok(res, task.toJSON());
     } catch (error) {
-      return this.internalError(res, error as any);
+      this.handleCatchError(res, error);
     }
   }
 

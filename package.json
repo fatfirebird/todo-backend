@@ -44,7 +44,6 @@
     "lint-staged": "^13.1.2",
     "nodemon": "^2.0.20",
     "prettier": "^2.8.4",
-    "sequelize-test-helpers": "^1.4.3",
     "ts-jest": "^29.0.5",
     "ts-node": "^10.9.1",
     "typescript": "4.9.5"

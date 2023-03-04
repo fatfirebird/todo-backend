@@ -1,4 +1,6 @@
+import { HttpError } from '../core/error';
 import { TaskStatus } from './task-entity';
+import { TaskWrongStatusError } from './task-error';
 import { TaskModel } from './task-model';
 
 class TaskService {
@@ -11,29 +13,31 @@ class TaskService {
   }
 
   static async setTaskStatus(task: TaskModel, status: TaskStatus) {
+    let error: HttpError | null = null;
+
     switch (status) {
       case TaskStatus.todo:
-        throw new Error('Cannot set status todo');
+        error = new TaskWrongStatusError(TaskStatus.todo, task.id);
 
       case TaskStatus.inProgress:
         if (this.isTodo(task.status)) {
           task = await task.update({ status });
         } else {
-          throw new Error('Cannot set status in progress');
+          error = new TaskWrongStatusError(TaskStatus.inProgress, task.id);
         }
 
       case TaskStatus.done:
         if (this.isInProgress(task.status)) {
           task = await task.update({ status });
         } else {
-          throw new Error('Cannot set status done');
+          error = new TaskWrongStatusError(TaskStatus.done, task.id);
         }
 
       default:
         break;
     }
 
-    return task;
+    return { task, error };
   }
 }
 

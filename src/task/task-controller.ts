@@ -1,7 +1,7 @@
 import { Response, Request } from 'express';
 import { BaseController } from '../core/base-controller';
-import { CreateTaskDTO, GetTaskDTO } from './task-dto';
-import { TaskStatus } from './task-entity';
+import { Task, TaskStatus } from './task-entity';
+import { TaskNotFoundError } from './task-error';
 import { TaskRepository } from './task-repository';
 import { TaskService } from './task-service';
 import { GetTaskListQueryParams } from './task-types';
@@ -13,23 +13,17 @@ class TaskController extends BaseController {
 
   async getTask(req: Request, res: Response) {
     try {
-      const dto: GetTaskDTO = {
-        id: req.params.id,
-      };
+      const id = req.params.id;
 
-      if (!dto.id) {
-        return this.badRequest(res, 'ID doesnt exists');
-      }
-
-      const task = await TaskRepository.findTaskById(dto.id);
+      const task = await TaskRepository.findTaskById(id);
 
       if (!task) {
-        return this.notFound(res, `Task with id: ${dto.id} doesnt exists`);
+        return this.notFound(res, new TaskNotFoundError(id));
       }
 
       return this.ok(res, task.toJSON());
     } catch (error) {
-      return this.internalError(res, error);
+      return this.internalError(res, error as any);
     }
   }
 
@@ -54,53 +48,34 @@ class TaskController extends BaseController {
 
       return this.ok(res, { tasks, meta });
     } catch (error) {
-      if (error instanceof Error) {
-        return this.internalError(res, error?.message);
-      }
-
-      return this.internalError(res);
+      this.handleCatchError(res, error);
     }
   }
 
   async createTask(req: Request, res: Response) {
     try {
-      const dto: CreateTaskDTO = {
-        text: req.body.text,
-      };
-
-      if (!dto.text) {
-        return this.badRequest(res, 'No text provided');
-      }
-
-      const task = await TaskRepository.createNewTask({
-        text: dto.text,
-      });
+      const text = req.body.text;
+      const task = await TaskRepository.createNewTask(new Task({ text, status: TaskStatus.todo }));
 
       return this.ok(res, task.toJSON());
     } catch (error) {
-      return this.internalError(res, error);
+      this.handleCatchError(res, error);
     }
   }
 
   async deleteTask(req: Request, res: Response) {
     try {
-      const dto = {
-        id: req.params?.id,
-      };
+      const id = req.params.id;
 
-      if (!dto.id) {
-        return this.badRequest(res, 'ID doesnt exists');
-      }
-
-      const deletedTasks = await TaskRepository.deleteTask(dto.id);
+      const deletedTasks = await TaskRepository.deleteTask(id);
 
       if (!deletedTasks) {
-        return this.notFound(res, `Task with id: ${dto.id} doesnt exists`);
+        return this.notFound(res, new TaskNotFoundError(id));
       }
 
       return this.ok(res);
     } catch (error) {
-      return this.internalError(res, error);
+      this.handleCatchError(res, error);
     }
   }
 
@@ -108,21 +83,21 @@ class TaskController extends BaseController {
     try {
       const id = req.params.id;
 
-      if (!id) {
-        return this.badRequest(res, 'ID doesnt exists');
-      }
-
       const task = await TaskRepository.findTaskById(id);
 
       if (!task) {
-        return this.notFound(res, `Task with id: ${id} doesnt exists`);
+        return this.notFound(res, new TaskNotFoundError(id));
       }
 
-      await TaskService.setTaskStatus(task, TaskStatus.inProgress);
+      const { error } = await TaskService.setTaskStatus(task, TaskStatus.inProgress);
+
+      if (error) {
+        return this.badRequest(res, error);
+      }
 
       return this.ok(res);
     } catch (error) {
-      return this.internalError(res, error);
+      this.handleCatchError(res, error);
     }
   }
 
@@ -130,50 +105,40 @@ class TaskController extends BaseController {
     try {
       const id = req.params.id;
 
-      if (!id) {
-        return this.badRequest(res, 'ID doesnt exists');
-      }
-
       const task = await TaskRepository.findTaskById(id);
 
       if (!task) {
-        return this.notFound(res, `Task with id: ${id} doesnt exists`);
+        return this.notFound(res, new TaskNotFoundError(id));
       }
 
-      await TaskService.setTaskStatus(task, TaskStatus.done);
+      const { error } = await TaskService.setTaskStatus(task, TaskStatus.done);
+
+      if (error) {
+        return this.badRequest(res, error);
+      }
 
       return this.ok(res);
     } catch (error) {
-      return this.internalError(res, error);
+      this.handleCatchError(res, error);
     }
   }
 
   async updateTask(req: Request, res: Response) {
     try {
-      const data = {
-        id: req.params.id,
-        text: req.body.text,
-      };
+      const id = req.params.id;
+      const text = req.body.text;
 
-      if (!data.id) {
-        return this.badRequest(res, 'ID doesnt exists');
-      }
-
-      if (!data.text) {
-        return this.badRequest(res, 'Text is required');
-      }
-
-      const task = await TaskRepository.findTaskById(data.id);
+      const task = await TaskRepository.findTaskById(id);
 
       if (!task) {
-        return this.notFound(res, `Task with id: ${data.id} doesnt exists`);
+        return this.notFound(res, new TaskNotFoundError(id));
       }
 
-      await task.update({ text: data.text });
+      await task.update({ text });
 
       return this.ok(res, task.toJSON());
     } catch (error) {
-      return this.internalError(res, error);
+      this.handleCatchError(res, error);
     }
   }
 }

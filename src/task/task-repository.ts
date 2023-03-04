@@ -22,6 +22,17 @@ class TaskRepository {
     });
   }
 
+  static async updateTaskText(id: string, text: string) {
+    return await TaskModel.update(
+      { text },
+      {
+        where: {
+          id,
+        },
+      },
+    );
+  }
+
   static async updateTaskStatus(id: string, status: TaskStatus) {
     return await TaskModel.update(
       { status },

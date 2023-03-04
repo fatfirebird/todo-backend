@@ -117,6 +117,35 @@ class TaskController extends BaseController {
       return this.internalError(res, error);
     }
   }
+
+  async updateTask(req: Request, res: Response) {
+    try {
+      const data = {
+        id: req.params.id,
+        text: req.body.text,
+      };
+
+      if (!data.id) {
+        return this.badRequest(res, 'ID doesnt exists');
+      }
+
+      if (!data.text) {
+        return this.badRequest(res, 'Text is required');
+      }
+
+      const task = await TaskRepository.findTaskById(data.id);
+
+      if (!task) {
+        return this.notFound(res, `Task with id: ${data.id} doesnt exists`);
+      }
+
+      await task.update({ text: data.text });
+
+      return this.ok(res, task.toJSON());
+    } catch (error) {
+      return this.internalError(res, error);
+    }
+  }
 }
 
 const taskController = new TaskController();

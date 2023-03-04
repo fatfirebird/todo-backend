@@ -1,5 +1,8 @@
+import { Meta } from '../core/meta';
+import { Order } from '../core/order';
 import { Task, TaskStatus } from './task-entity';
 import { TaskModel } from './task-model';
+import { TaskListFilters } from './task-types';
 
 class TaskRepository {
   static async findTaskById(id: string) {
@@ -10,10 +13,14 @@ class TaskRepository {
     });
   }
 
-  static async findAllTasks({ offset, limit }: any) {
+  static async findAllTasks({ offset, limit }: Meta, filters: TaskListFilters, order: Order) {
     return TaskModel.findAll({
       offset,
       limit,
+      where: {
+        ...filters,
+      },
+      order: [['id', order.id]],
     });
   }
 

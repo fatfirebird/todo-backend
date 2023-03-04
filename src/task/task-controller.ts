@@ -4,6 +4,7 @@ import { CreateTaskDTO, GetTaskDTO } from './task-dto';
 import { TaskStatus } from './task-entity';
 import { TaskRepository } from './task-repository';
 import { TaskService } from './task-service';
+import { GetTaskListQueryParams } from './task-types';
 
 class TaskController extends BaseController {
   constructor() {
@@ -32,18 +33,32 @@ class TaskController extends BaseController {
     }
   }
 
-  async getTaskList(req: Request, res: Response) {
+  async getTaskList(req: Request<unknown, unknown, unknown, GetTaskListQueryParams>, res: Response) {
     try {
       const meta = {
-        offset: req.query.offset ?? 0,
-        limit: req.query.limit ?? 10,
+        offset: Number(req.query.offset) || 0,
+        limit: Number(req.query.limit) || 10,
       };
 
-      const tasks = await TaskRepository.findAllTasks(meta);
+      const status = req.query.status || [TaskStatus.todo, TaskStatus.inProgress, TaskStatus.done];
+
+      const filters = {
+        status: Array.isArray(status) ? status : [status],
+      };
+
+      const order = {
+        id: req.query.order?.id ?? 'asc',
+      };
+
+      const tasks = await TaskRepository.findAllTasks(meta, filters, order);
 
       return this.ok(res, { tasks, meta });
     } catch (error) {
-      return this.internalError(res, error);
+      if (error instanceof Error) {
+        return this.internalError(res, error?.message);
+      }
+
+      return this.internalError(res);
     }
   }
 

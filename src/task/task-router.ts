@@ -1,9 +1,12 @@
 import { Router } from 'express';
 import { taskController } from './task-controller';
+import { GetTaskListQueryParams } from './task-types';
 
 const taskRouter = Router();
 
-taskRouter.get('/', (req, res) => taskController.getTaskList(req, res));
+taskRouter.get<unknown, unknown, unknown, GetTaskListQueryParams>('/', (req, res) =>
+  taskController.getTaskList(req, res),
+);
 taskRouter.post('/', (req, res) => taskController.createTask(req, res));
 taskRouter.get('/:id', (req, res) => taskController.getTask(req, res));
 taskRouter.delete('/:id', (req, res) => taskController.deleteTask(req, res));

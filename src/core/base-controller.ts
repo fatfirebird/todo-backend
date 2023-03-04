@@ -21,7 +21,7 @@ export abstract class BaseController {
     return this.sendError(res, 404, error);
   }
 
-  internalError(res: Response, error: unknown) {
-    return this.sendError(res, 500, error);
+  internalError(res: Response, error?: unknown) {
+    return this.sendError(res, 500, error ?? 'Internal server error');
   }
 }

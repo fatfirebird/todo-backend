@@ -20,7 +20,7 @@ class TaskService {
 
     const tags = await TagRepository.findAllByIds(tagIds);
 
-    if (!tags.length) {
+    if (!tags.length && tagIds.length) {
       error = new InvalidTagIdsError(tagIds);
       return { error, task: null };
     }

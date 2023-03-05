@@ -7,6 +7,12 @@ import { GetTagListQueryParams } from './tag.types';
 
 const tagRouter = Router();
 
+tagRouter.use((req, res, next) => {
+  console.log('check');
+  console.log(req);
+  next();
+});
+
 tagRouter.get<unknown, unknown, unknown, GetTagListQueryParams>('/', (req, res) => tagController.getTagList(req, res));
 tagRouter.post('/', createValidator(tagBodyValidation), (req, res) => tagController.createTag(req, res));
 tagRouter.get('/:id', createValidator(paramValidationSchema), (req, res) => tagController.getTag(req, res));

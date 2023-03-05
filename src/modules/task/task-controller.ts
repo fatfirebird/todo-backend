@@ -53,7 +53,7 @@ class TaskController extends BaseController {
   async createTask(req: Request, res: Response) {
     try {
       const text = req.body.text;
-      const tagIds = req.body.tags;
+      const tagIds = req.body.tags ?? [];
 
       const taskData = new Task({ text });
 

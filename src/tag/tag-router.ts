@@ -3,9 +3,11 @@ import { createValidator } from '../core/middleware/create-validator';
 import { paramValidationSchema } from '../core/validation';
 import { tagController } from './tag-contoller';
 import { tagBodyValidation } from './tag-validation';
+import { GetTagListQueryParams } from './tag.types';
 
 const tagRouter = Router();
 
+tagRouter.get<unknown, unknown, unknown, GetTagListQueryParams>('/', (req, res) => tagController.getTagList(req, res));
 tagRouter.post('/', createValidator(tagBodyValidation), (req, res) => tagController.createTag(req, res));
 tagRouter.get('/:id', createValidator(paramValidationSchema), (req, res) => tagController.getTag(req, res));
 tagRouter.delete('/:id', createValidator(paramValidationSchema), (req, res) => tagController.deleteTag(req, res));

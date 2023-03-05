@@ -1,12 +1,26 @@
 import { Response, Request } from 'express';
 import { BaseController } from '../core/base-controller';
+import { Meta } from '../core/meta';
 import { Tag } from './tag-entity';
 import { TagNotFoundError } from './tag-error';
 import { TagRepository } from './tag-repository';
+import { GetTagListQueryParams } from './tag.types';
 
 class TagController extends BaseController {
   constructor() {
     super();
+  }
+
+  async getTagList(req: Request<unknown, unknown, unknown, GetTagListQueryParams>, res: Response) {
+    try {
+      const meta = new Meta({ offset: req.query.offset, limit: req.query.limit });
+
+      const tags = await TagRepository.findAll(meta);
+
+      return this.ok(res, { tags: tags.rows, meta: { ...meta, count: tags.count } });
+    } catch (error) {
+      return this.handleCatchError(res, error);
+    }
   }
 
   async getTag(req: Request, res: Response) {

@@ -44,7 +44,7 @@ class TaskController extends BaseController {
 
       const tasks = await TaskRepository.findAllTasks(meta, filters, order);
 
-      return this.ok(res, { tasks, meta });
+      return this.ok(res, { tasks: tasks.rows, meta: { ...meta, count: tasks.count } });
     } catch (error) {
       this.handleCatchError(res, error);
     }

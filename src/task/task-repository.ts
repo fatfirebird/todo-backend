@@ -17,7 +17,7 @@ class TaskRepository {
   }
 
   static async findAllTasks({ offset, limit }: Meta, filters: TaskListFilters, order: Order) {
-    return TaskModel.findAll({
+    return TaskModel.findAndCountAll({
       offset,
       limit,
       where: {

@@ -53,7 +53,15 @@ class TaskController extends BaseController {
   async createTask(req: Request, res: Response) {
     try {
       const text = req.body.text;
-      const task = await TaskRepository.createNewTask(new Task({ text, status: TaskStatus.todo }));
+      const tagIds = req.body.tags;
+
+      const taskData = new Task({ text });
+
+      const { error, task } = await TaskService.createTask(taskData, tagIds);
+
+      if (error) {
+        return this.badRequest(res, error);
+      }
 
       return this.ok(res, task.toJSON());
     } catch (error) {
@@ -79,15 +87,14 @@ class TaskController extends BaseController {
   async takeTaskToWork(req: Request, res: Response) {
     try {
       const id = req.params.id;
-      const task = await TaskRepository.findTaskById(id);
 
-      if (!task) {
-        return this.notFound(res, new TaskNotFoundError(id));
-      }
-
-      const { error } = await TaskService.setTaskStatus(task, TaskStatus.inProgress);
+      const { error, task } = await TaskService.setTaskStatus(id, TaskStatus.inProgress);
 
       if (error) {
+        if (!task) {
+          return this.notFound(res, error);
+        }
+
         return this.badRequest(res, error);
       }
 
@@ -100,15 +107,14 @@ class TaskController extends BaseController {
   async doneTask(req: Request, res: Response) {
     try {
       const id = req.params.id;
-      const task = await TaskRepository.findTaskById(id);
 
-      if (!task) {
-        return this.notFound(res, new TaskNotFoundError(id));
-      }
-
-      const { error } = await TaskService.setTaskStatus(task, TaskStatus.done);
+      const { error, task } = await TaskService.setTaskStatus(id, TaskStatus.done);
 
       if (error) {
+        if (!task) {
+          return this.notFound(res, error);
+        }
+
         return this.badRequest(res, error);
       }
 
@@ -121,11 +127,13 @@ class TaskController extends BaseController {
   async updateTask(req: Request, res: Response) {
     try {
       const id = req.params.id;
-      const text = req.body.text;
-      const task = await TaskRepository.updateTaskText(id, text);
+      const taskData = new Task({ text: req.body.text });
+      const tagIds = req.body.tags;
 
-      if (!task) {
-        return this.notFound(res, new TaskNotFoundError(id));
+      const { error, task } = await TaskService.updateTask(id, taskData, tagIds);
+
+      if (error) {
+        return this.badRequest(res, error);
       }
 
       return this.ok(res, task.toJSON());

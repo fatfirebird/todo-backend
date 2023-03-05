@@ -7,3 +7,21 @@ export const textValidationSchema = checkSchema({
     },
   },
 });
+
+export const createTagsArraySchema = (min = 0) =>
+  checkSchema({
+    tags: {
+      optional: true,
+      isArray: {
+        errorMessage: 'Should be an array of numbers or empty array or empty value',
+        options: {
+          min,
+        },
+      },
+    },
+    'tags.*': {
+      isNumeric: {
+        errorMessage: 'Should be an array of numbers or empty value',
+      },
+    },
+  });

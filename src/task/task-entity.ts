@@ -8,12 +8,12 @@ export enum TaskStatus {
 
 interface TaskData {
   text: string;
-  status: TaskStatus;
+  status?: TaskStatus;
 }
 
-export class Task extends Entity<TaskData> {
-  constructor(data: TaskData) {
-    super(data);
+export class Task extends Entity<Required<TaskData>> {
+  constructor({ status = TaskStatus.todo, ...restData }: TaskData) {
+    super({ status, ...restData });
   }
 
   get text(): string {

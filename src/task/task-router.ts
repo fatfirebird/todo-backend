@@ -2,16 +2,16 @@ import { Router } from 'express';
 import { taskController } from './task-controller';
 import { GetTaskListQueryParams } from './task-types';
 import { createValidator } from '../core/middleware/create-validator';
-import { textValidationSchema } from './task-validation';
 import { validateUpdateTask } from './middleware/validate-update-task';
 import { paramValidationSchema } from '../core/validation';
+import { validateCreateTask } from './middleware/validate-create-task';
 
 const taskRouter = Router();
 
 taskRouter.get<unknown, unknown, unknown, GetTaskListQueryParams>('/', (req, res) =>
   taskController.getTaskList(req, res),
 );
-taskRouter.post('/', createValidator(textValidationSchema), (req, res) => taskController.createTask(req, res));
+taskRouter.post('/', validateCreateTask(), (req, res) => taskController.createTask(req, res));
 taskRouter.get('/:id', createValidator(paramValidationSchema), (req, res) => taskController.getTask(req, res));
 taskRouter.delete('/:id', createValidator(paramValidationSchema), (req, res) => taskController.deleteTask(req, res));
 taskRouter.patch('/:id', validateUpdateTask(), (req, res) => taskController.updateTask(req, res));

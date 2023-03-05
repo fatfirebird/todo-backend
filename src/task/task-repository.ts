@@ -24,11 +24,12 @@ class TaskRepository {
         ...filters,
       },
       order: [['id', order.id]],
+      include: TagModel,
     });
   }
 
   static async createNewTask({ data }: Task) {
-    return await TaskModel.create(data);
+    return await TaskModel.create({ ...data });
   }
 
   static async deleteTask(id: string) {

@@ -1,8 +1,19 @@
+import { Op } from 'sequelize';
 import { Meta } from '../core/meta';
 import { TagModel } from '../database/models';
 import { Tag } from './tag-entity';
 
 class TagRepository {
+  static async findAllByIds(ids: number[]) {
+    return await TagModel.findAll({
+      where: {
+        id: {
+          [Op.in]: ids,
+        },
+      },
+    });
+  }
+
   static async findAll(meta: Meta) {
     return await TagModel.findAndCountAll({
       offset: meta.offset,

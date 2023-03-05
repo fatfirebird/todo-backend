@@ -7,3 +7,11 @@ export class TagNotFoundError extends HttpError {
     });
   }
 }
+
+export class InvalidTagIdsError extends HttpError {
+  constructor(ids: number[]) {
+    super({
+      message: `Invalid tag ids: ${ids}`,
+    });
+  }
+}

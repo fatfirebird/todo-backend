@@ -1,5 +1,5 @@
 import { Response, Request } from 'express';
-import { BaseController } from '../core/base-controller';
+import { BaseController } from '@/core/base-controller';
 import { Task, TaskStatus } from './task-entity';
 import { TaskNotFoundError } from './task-error';
 import { TaskRepository } from './task-repository';

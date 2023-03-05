@@ -1,6 +1,6 @@
 import { Response, Request } from 'express';
-import { BaseController } from '../core/base-controller';
-import { Meta } from '../core/meta';
+import { BaseController } from '@/core/base-controller';
+import { Meta } from '@/core/meta';
 import { Tag } from './tag-entity';
 import { TagNotFoundError } from './tag-error';
 import { TagRepository } from './tag-repository';

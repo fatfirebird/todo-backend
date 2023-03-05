@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { createValidator } from '../core/middleware/create-validator';
-import { paramValidationSchema } from '../core/validation';
+import { createValidator } from '@/core/middleware/create-validator';
+import { paramValidationSchema } from '@/core/validation';
 import { tagController } from './tag-contoller';
 import { tagBodyValidation } from './tag-validation';
 import { GetTagListQueryParams } from './tag.types';

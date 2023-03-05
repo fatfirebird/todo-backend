@@ -17,7 +17,7 @@ import {
   Association,
   DataTypes,
 } from 'sequelize';
-import { TaskStatus } from '../../task/task-entity';
+import { TaskStatus } from '@/modules/task/task-entity';
 import { sequelize } from '../config';
 import { TagModel } from './tag-model';
 

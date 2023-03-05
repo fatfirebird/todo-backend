@@ -1,6 +1,6 @@
-import { Meta } from '../core/meta';
-import { Order } from '../core/order';
-import { TagModel, TaskModel } from '../database/models';
+import { Meta } from '@/core/meta';
+import { Order } from '@/core/order';
+import { TagModel, TaskModel } from '@/database/models';
 import { Task, TaskStatus } from './task-entity';
 import { TaskListFilters } from './task-types';
 

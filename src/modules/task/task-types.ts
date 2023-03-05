@@ -1,5 +1,5 @@
-import { Meta } from '../core/meta';
-import { Order } from '../core/order';
+import { Meta } from '@/core/meta';
+import { Order } from '@/core/order';
 import { TaskStatus } from './task-entity';
 
 export interface TaskListFilters {

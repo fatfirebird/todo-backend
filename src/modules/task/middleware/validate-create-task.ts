@@ -1,4 +1,4 @@
-import { createValidator } from '../../core/middleware/create-validator';
+import { createValidator } from '@/core/middleware/create-validator';
 
 import { createTagsArraySchema, textValidationSchema } from '../task-validation';
 

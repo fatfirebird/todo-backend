@@ -1,5 +1,5 @@
-import { HttpError } from '../core/error';
-import { TagModel } from '../database/models';
+import { HttpError } from '@/core/error';
+import { TagModel } from '@/database/models';
 import { InvalidTagIdsError } from '../tag/tag-error';
 import { TagRepository } from '../tag/tag-repository';
 import { Task, TaskStatus } from './task-entity';

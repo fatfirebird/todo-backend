@@ -1,9 +1,9 @@
 import { Router } from 'express';
 import { taskController } from './task-controller';
 import { GetTaskListQueryParams } from './task-types';
-import { createValidator } from '../core/middleware/create-validator';
+import { createValidator } from '@/core/middleware/create-validator';
 import { validateUpdateTask } from './middleware/validate-update-task';
-import { paramValidationSchema } from '../core/validation';
+import { paramValidationSchema } from '@/core/validation';
 import { validateCreateTask } from './middleware/validate-create-task';
 
 const taskRouter = Router();

@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { tagRouter } from '../tag/tag-router';
-import { taskRouter } from '../task/task-router';
+import { tagRouter } from '@/modules/tag/tag-router';
+import { taskRouter } from '@/modules/task/task-router';
 
 const routerV1 = Router();
 

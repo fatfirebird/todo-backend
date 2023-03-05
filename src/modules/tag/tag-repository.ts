@@ -1,6 +1,6 @@
 import { Op } from 'sequelize';
-import { Meta } from '../core/meta';
-import { TagModel } from '../database/models';
+import { Meta } from '@/core/meta';
+import { TagModel } from '@/database/models';
 import { Tag } from './tag-entity';
 
 class TagRepository {

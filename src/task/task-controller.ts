@@ -14,7 +14,6 @@ class TaskController extends BaseController {
   async getTask(req: Request, res: Response) {
     try {
       const id = req.params.id;
-
       const task = await TaskRepository.findTaskById(id);
 
       if (!task) {
@@ -35,7 +34,6 @@ class TaskController extends BaseController {
       };
 
       const status = req.query.status || [TaskStatus.todo, TaskStatus.inProgress, TaskStatus.done];
-
       const filters = {
         status: Array.isArray(status) ? status : [status],
       };
@@ -66,7 +64,6 @@ class TaskController extends BaseController {
   async deleteTask(req: Request, res: Response) {
     try {
       const id = req.params.id;
-
       const deletedTasks = await TaskRepository.deleteTask(id);
 
       if (!deletedTasks) {
@@ -82,7 +79,6 @@ class TaskController extends BaseController {
   async takeTaskToWork(req: Request, res: Response) {
     try {
       const id = req.params.id;
-
       const task = await TaskRepository.findTaskById(id);
 
       if (!task) {
@@ -104,7 +100,6 @@ class TaskController extends BaseController {
   async doneTask(req: Request, res: Response) {
     try {
       const id = req.params.id;
-
       const task = await TaskRepository.findTaskById(id);
 
       if (!task) {
@@ -127,14 +122,11 @@ class TaskController extends BaseController {
     try {
       const id = req.params.id;
       const text = req.body.text;
-
-      const task = await TaskRepository.findTaskById(id);
+      const task = await TaskRepository.updateTaskText(id, text);
 
       if (!task) {
         return this.notFound(res, new TaskNotFoundError(id));
       }
-
-      await task.update({ text });
 
       return this.ok(res, task.toJSON());
     } catch (error) {

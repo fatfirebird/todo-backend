@@ -1,7 +1,7 @@
 import { HttpError } from '../core/error';
+import { TaskModel } from '../database/models';
 import { TaskStatus } from './task-entity';
 import { TaskWrongStatusError } from './task-error';
-import { TaskModel } from './task-model';
 
 class TaskService {
   static isTodo(status: TaskStatus) {

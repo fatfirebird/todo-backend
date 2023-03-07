@@ -13,11 +13,11 @@
   "tags": [
     {
       "name": "task",
-      "description": "task"
+      "description": "task tracking"
     },
     {
       "name": "tag",
-      "description": "task tags"
+      "description": "tags for task marking"
     }
   ],
   "paths": {

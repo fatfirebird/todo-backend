@@ -1,5 +1,4 @@
 import 'module-alias/register';
-
 import { HttpError } from '../../core/error';
 import createSwaggerAutogen from 'swagger-autogen';
 import { Meta } from '../../core/meta';
@@ -53,11 +52,11 @@ const doc = {
   tags: [
     {
       name: 'task',
-      description: 'task',
+      description: 'task tracking',
     },
     {
       name: 'tag',
-      description: 'task tags',
+      description: 'tags for task marking',
     },
   ],
   definitions: {
@@ -98,11 +97,4 @@ const doc = {
 const outputFile = './swagger.json';
 const endpointsFiles = ['../../main.ts'];
 
-/* NOTE: if you use the express Router, you must pass in the 
-   'endpointsFiles' only the root file where the route starts,
-   such as index.js, app.js, routes.js, ... */
-swaggerAutogen(outputFile, endpointsFiles, doc)
-  .then(async () => {
-    await import('../../main');
-  })
-  .catch((err) => console.log(err));
+swaggerAutogen(outputFile, endpointsFiles, doc);

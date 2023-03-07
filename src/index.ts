@@ -1,4 +1,4 @@
-import 'module-alias/register'; // 👈 add this one
+import 'module-alias/register';
 import { App } from './main';
 
 const app = new App();

@@ -127,8 +127,10 @@ class TaskController extends BaseController {
   async updateTask(req: Request, res: Response) {
     try {
       const id = req.params.id;
-      const taskData = new Task({ text: req.body.text });
+      const text = req.body.text;
       const tagIds = req.body.tags;
+
+      const taskData = new Task({ text });
 
       const { error, task } = await TaskService.updateTask(id, taskData, tagIds);
 

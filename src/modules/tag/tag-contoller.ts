@@ -40,7 +40,9 @@ class TagController extends BaseController {
 
   async createTag(req: Request, res: Response) {
     try {
-      const tagData = new Tag(req.body);
+      const { name, color } = req.body;
+
+      const tagData = new Tag({ name, color });
       const tag = await TagRepository.createTag(tagData);
 
       return this.ok(res, tag.toJSON());
@@ -52,6 +54,7 @@ class TagController extends BaseController {
   async deleteTag(req: Request, res: Response) {
     try {
       const id = req.params.id;
+
       const deletedTags = await TagRepository.deleteTag(id);
 
       if (!deletedTags) {
@@ -67,7 +70,9 @@ class TagController extends BaseController {
   async updateTag(req: Request, res: Response) {
     try {
       const id = req.params.id;
-      const tagData = new Tag(req.body);
+      const { name, color } = req.body;
+
+      const tagData = new Tag({ name, color });
       const tag = await TagRepository.updateTag(tagData, id);
 
       if (!tag) {

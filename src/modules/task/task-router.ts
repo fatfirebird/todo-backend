@@ -5,8 +5,11 @@ import { createValidator } from '@/core/middleware/create-validator';
 import { validateUpdateTask } from './middleware/validate-update-task';
 import { paramValidationSchema } from '@/core/validation';
 import { validateCreateTask } from './middleware/validate-create-task';
+import { verifyToken } from '../auth/middleware/verify-token';
 
 const taskRouter = Router();
+
+taskRouter.use(verifyToken);
 
 taskRouter.get('/', (req, res) =>
   // #swagger.tags = ['task']

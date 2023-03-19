@@ -2,7 +2,7 @@ import { User } from './user-entity';
 import { UserRepository } from './user-repository';
 import bcrypt from 'bcrypt';
 import { AuthService } from '../auth/auth-service';
-import { InvalidUserLogin } from './user-error';
+import { UserLoginUsed, InvalidPasswordOrLogin } from './user-error';
 export class UserService {
   static async createUser(userData: User) {
     try {
@@ -26,8 +26,30 @@ export class UserService {
         user: null,
         accessToken: null,
         refreshToken: null,
-        error: new InvalidUserLogin(userData.login),
+        error: new UserLoginUsed(userData.login),
       };
     }
+  }
+
+  static async verifyPassword(userData: User) {
+    const user = await UserRepository.findUserByLogin(userData.login);
+
+    if (!user) {
+      return {
+        error: new InvalidPasswordOrLogin(),
+        user,
+      };
+    }
+
+    const match = await bcrypt.compare(userData.password, user.passwordHash);
+
+    if (!match) {
+      return {
+        error: new InvalidPasswordOrLogin(),
+        user,
+      };
+    }
+
+    return { user, error: null };
   }
 }

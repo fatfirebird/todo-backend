@@ -1,4 +1,4 @@
-import { APP_CONFIG } from '@/config/application';
+import { TOKENS_CONFIG } from '@/config/tokens';
 import { AuthModel } from '@/database/models/auth-model';
 import { sign, verify } from 'jsonwebtoken';
 import { CreationTokenError, InvalidRefreshToken } from './auth-error';
@@ -6,11 +6,11 @@ import { CreationTokenError, InvalidRefreshToken } from './auth-error';
 export class AuthService {
   static async createToken(userId: number) {
     try {
-      const accessToken = sign({ userId }, APP_CONFIG.SECRET, {
-        expiresIn: '1h',
+      const accessToken = sign({ userId }, TOKENS_CONFIG.SECRET, {
+        expiresIn: '10m',
       });
 
-      const refreshToken = sign({ userId }, APP_CONFIG.SECRET, {
+      const refreshToken = sign({ userId }, TOKENS_CONFIG.SECRET, {
         expiresIn: '24h',
       });
 
@@ -24,7 +24,7 @@ export class AuthService {
 
   static async refreshToken(refresh: string) {
     try {
-      const decoded = verify(refresh, APP_CONFIG.SECRET);
+      const decoded = verify(refresh, TOKENS_CONFIG.SECRET);
 
       if (typeof decoded === 'string') {
         return { refreshToken: null, accessToken: null, error: new InvalidRefreshToken() };

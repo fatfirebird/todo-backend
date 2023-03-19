@@ -12,6 +12,14 @@ class UserRepository {
     });
   }
 
+  static async findUserByLogin(login: string) {
+    return await UserModel.findOne({
+      where: {
+        login,
+      },
+    });
+  }
+
   static async createUser({ login, passwordHash }: { login: string; passwordHash: string }) {
     return await UserModel.create({
       login: login,

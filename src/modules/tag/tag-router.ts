@@ -4,8 +4,11 @@ import { paramValidationSchema } from '@/core/validation';
 import { tagController } from './tag-contoller';
 import { tagBodyValidation } from './tag-validation';
 import { GetTagListQueryParams } from './tag.types';
+import { verifyToken } from '../auth/middleware/verify-token';
 
 const tagRouter = Router();
+
+tagRouter.use(verifyToken);
 
 tagRouter.get('/', (req, res) =>
   // #swagger.tags = ['tag']

@@ -22,7 +22,6 @@ AuthModel.init(
   },
   {
     sequelize,
-    paranoid: true,
     modelName: 'auth',
   },
 );

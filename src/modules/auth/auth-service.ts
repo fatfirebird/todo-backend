@@ -1,7 +1,7 @@
 import { APP_CONFIG } from '@/config/application';
-import { HttpError } from '@/core/error';
 import { AuthModel } from '@/database/models/auth-model';
-import { sign } from 'jsonwebtoken';
+import { sign, verify } from 'jsonwebtoken';
+import { CreationTokenError, InvalidRefreshToken } from './auth-error';
 
 export class AuthService {
   static async createToken(userId: number) {
@@ -16,13 +16,36 @@ export class AuthService {
 
       await AuthModel.create({ refresh: refreshToken, userId });
 
-      return { data: { accessToken, refreshToken } };
+      return { accessToken, refreshToken };
     } catch (error) {
-      if (error instanceof Error) {
-        return { error: new HttpError({ message: error.message }) };
-      } else {
-        return { error: new HttpError({ message: "Can't create token" }) };
+      return { error: new CreationTokenError() };
+    }
+  }
+
+  static async refreshToken(refresh: string) {
+    try {
+      const decoded = verify(refresh, APP_CONFIG.SECRET);
+
+      if (typeof decoded === 'string') {
+        return { refreshToken: null, accessToken: null, error: new InvalidRefreshToken() };
       }
+
+      const oldToken = await AuthModel.findOne({
+        where: {
+          userId: decoded.userId,
+          refresh: refresh,
+        },
+      });
+
+      if (!oldToken) {
+        return { refreshToken: null, accessToken: null, error: new InvalidRefreshToken() };
+      }
+
+      await oldToken.destroy();
+
+      return await this.createToken(decoded.userId);
+    } catch (error) {
+      return { refreshToken: null, accessToken: null, error: new InvalidRefreshToken() };
     }
   }
 }

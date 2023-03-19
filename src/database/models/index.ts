@@ -13,6 +13,6 @@ TagModel.belongsTo(TagModel);
 TaskModel.belongsToMany(TagModel, { through: 'taskTags' });
 TagModel.belongsToMany(TaskModel, { through: 'taskTags' });
 
-sequelize.sync({ alter: true });
+sequelize.sync({ alter: true, force: true });
 
 export { TagModel, TaskModel };

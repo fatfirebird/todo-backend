@@ -9,7 +9,7 @@ export class UserService {
       const hash = await bcrypt.hash(userData.password, 10);
       const user = await UserRepository.createUser({ login: userData.login, passwordHash: hash });
 
-      const { data, error } = await AuthService.createToken(user.id);
+      const { error, ...data } = await AuthService.createToken(user.id);
 
       if (error) {
         return {

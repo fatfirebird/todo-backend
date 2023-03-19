@@ -3,6 +3,6 @@ export const isDevelopment = process.env.NODE_ENV === 'development';
 
 export const APP_CONFIG = {
   PORT: process.env.PORT ?? 3000,
-  // TODO: cors
-  ORIGIN: isProducation ? '' : '*',
+  ORIGIN: isProducation ? '*' : '*',
+  SECRET: process.env.SECRET_KEY as string,
 };

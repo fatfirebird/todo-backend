@@ -1,15 +1,33 @@
-import { HttpError } from '@/core/error';
 import { User } from './user-entity';
 import { UserRepository } from './user-repository';
 import bcrypt from 'bcrypt';
+import { AuthService } from '../auth/auth-service';
+import { InvalidUserLogin } from './user-error';
 export class UserService {
   static async createUser(userData: User) {
-    const error: HttpError | null = null;
+    try {
+      const hash = await bcrypt.hash(userData.password, 10);
+      const user = await UserRepository.createUser({ login: userData.login, passwordHash: hash });
 
-    const hash = await bcrypt.hash(userData.password, 10);
+      const { data, error } = await AuthService.createToken(user.id);
 
-    const user = await UserRepository.createUser({ login: userData.login, passwordHash: hash });
+      if (error) {
+        return {
+          user: null,
+          accessToken: null,
+          refreshToken: null,
+          error,
+        };
+      }
 
-    return { user, error };
+      return { user, error, ...data };
+    } catch (error) {
+      return {
+        user: null,
+        accessToken: null,
+        refreshToken: null,
+        error: new InvalidUserLogin(userData.login),
+      };
+    }
   }
 }

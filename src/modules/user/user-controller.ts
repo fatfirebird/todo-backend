@@ -27,15 +27,17 @@ class UserController extends BaseController {
     try {
       const userData = new User({ login: req.body.login, password: req.body.password });
 
-      const { user, error } = await UserService.createUser(userData);
+      const { user, error, accessToken, refreshToken } = await UserService.createUser(userData);
 
       if (error) {
-        this.badRequest(res, error);
+        return this.badRequest(res, error);
       }
 
-      const data = omit(user.toJSON(), ['passwordHash']);
-
-      return this.ok(res, data);
+      return this.ok(res, {
+        user: omit(user.toJSON(), ['passwordHash']),
+        accessToken,
+        refreshToken,
+      });
     } catch (error) {
       return this.handleCatchError(res, error);
     }

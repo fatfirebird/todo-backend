@@ -1,27 +1,21 @@
 import { Model, InferAttributes, InferCreationAttributes, CreationOptional, DataTypes, ForeignKey } from 'sequelize';
 import { sequelize } from '../config';
-import { AuthModel } from './auth-model';
+import { UserModel } from './user-model';
 
-class UserModel extends Model<InferAttributes<UserModel>, InferCreationAttributes<UserModel>> {
+class AuthModel extends Model<InferAttributes<AuthModel>, InferCreationAttributes<AuthModel>> {
   declare id: CreationOptional<number>;
-  declare login: string;
-  declare passwordHash: string;
-  declare authId: ForeignKey<AuthModel['id']>;
+  declare refresh: string;
+  declare userId: ForeignKey<UserModel['id']>;
 }
 
-UserModel.init(
+AuthModel.init(
   {
     id: {
       type: DataTypes.INTEGER.UNSIGNED,
       autoIncrement: true,
       primaryKey: true,
     },
-    login: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-    },
-    passwordHash: {
+    refresh: {
       type: DataTypes.STRING,
       allowNull: false,
     },
@@ -29,8 +23,8 @@ UserModel.init(
   {
     sequelize,
     paranoid: true,
-    modelName: 'user',
+    modelName: 'auth',
   },
 );
 
-export { UserModel };
+export { AuthModel };

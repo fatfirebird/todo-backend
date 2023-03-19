@@ -7,3 +7,13 @@ export class UserNotFoundError extends HttpError {
     });
   }
 }
+
+export class InvalidUserLogin extends HttpError {
+  constructor(login: string) {
+    super({
+      message: `User login: ${login} is alredy in use`,
+      field: 'login',
+      value: login,
+    });
+  }
+}

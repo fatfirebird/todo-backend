@@ -1,4 +1,3 @@
-import 'module-alias/register';
 import { APP_CONFIG } from './config/application';
 import express, { Express } from 'express';
 import * as dotenv from 'dotenv';

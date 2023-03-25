@@ -7,7 +7,7 @@ import { UserModel } from './user-model';
 UserModel.hasMany(TaskModel);
 TaskModel.belongsTo(UserModel);
 UserModel.hasMany(TagModel);
-TagModel.belongsTo(TagModel);
+TagModel.belongsTo(UserModel);
 TaskModel.belongsToMany(TagModel, { through: 'taskTags' });
 TagModel.belongsToMany(TaskModel, { through: 'taskTags' });
 

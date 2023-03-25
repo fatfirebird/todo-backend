@@ -4,12 +4,13 @@ import { TagModel } from '@/database/models';
 import { Tag } from './tag-entity';
 
 class TagRepository {
-  static async findAllByIds(ids: number[]) {
+  static async findAllByIds(ids: number[], userId: number) {
     return await TagModel.findAll({
       where: {
         id: {
           [Op.in]: ids,
         },
+        userId,
       },
     });
   }

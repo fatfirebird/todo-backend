@@ -5,6 +5,7 @@ import { TaskNotFoundError } from './task-error';
 import { TaskRepository } from './task-repository';
 import { TaskService } from './task-service';
 import { GetTaskListQueryParams } from './task-types';
+import { ForbiddenResource } from '@/core/errors';
 
 class TaskController extends BaseController {
   constructor() {
@@ -14,10 +15,16 @@ class TaskController extends BaseController {
   async getTask(req: Request, res: Response) {
     try {
       const id = req.params.id;
+      const userId = Number(res.locals.userId);
+
       const task = await TaskRepository.findTaskById(id);
 
       if (!task) {
         return this.notFound(res, new TaskNotFoundError(id));
+      }
+
+      if (task?.userId !== userId) {
+        return this.forbidden(res, new ForbiddenResource());
       }
 
       return this.ok(res, task.toJSON());
@@ -42,7 +49,9 @@ class TaskController extends BaseController {
         id: req.query.order?.id ?? 'asc',
       };
 
-      const tasks = await TaskRepository.findAllTasks(meta, filters, order);
+      const userId = Number(res.locals.userId);
+
+      const tasks = await TaskRepository.findAllTasks(meta, filters, order, userId);
 
       return this.ok(res, { tasks: tasks.rows, meta: { ...meta, count: tasks.count } });
     } catch (error) {
@@ -54,10 +63,11 @@ class TaskController extends BaseController {
     try {
       const text = req.body.text;
       const tagIds = req.body.tags ?? [];
+      const userId = Number(res.locals.userId);
 
       const taskData = new Task({ text });
 
-      const { error, task } = await TaskService.createTask(taskData, tagIds);
+      const { error, task } = await TaskService.createTask(taskData, tagIds, userId);
 
       if (error) {
         return this.badRequest(res, error);
@@ -72,11 +82,19 @@ class TaskController extends BaseController {
   async deleteTask(req: Request, res: Response) {
     try {
       const id = req.params.id;
-      const deletedTasks = await TaskRepository.deleteTask(id);
+      const userId = Number(res.locals.userId);
 
-      if (!deletedTasks) {
+      const task = await TaskRepository.findTaskById(id);
+
+      if (!task) {
         return this.notFound(res, new TaskNotFoundError(id));
       }
+
+      if (task.userId !== userId) {
+        return this.forbidden(res, new ForbiddenResource());
+      }
+
+      await task.destroy();
 
       return this.ok(res);
     } catch (error) {
@@ -87,12 +105,17 @@ class TaskController extends BaseController {
   async takeTaskToWork(req: Request, res: Response) {
     try {
       const id = req.params.id;
+      const userId = Number(res.locals.userId);
 
-      const { error, task } = await TaskService.setTaskStatus(id, TaskStatus.inProgress);
+      const { error, task } = await TaskService.setTaskStatus(id, TaskStatus.inProgress, userId);
 
       if (error) {
         if (!task) {
           return this.notFound(res, error);
+        }
+
+        if (error instanceof ForbiddenResource) {
+          return this.forbidden(res, error);
         }
 
         return this.badRequest(res, error);
@@ -107,12 +130,17 @@ class TaskController extends BaseController {
   async doneTask(req: Request, res: Response) {
     try {
       const id = req.params.id;
+      const userId = Number(res.locals.userId);
 
-      const { error, task } = await TaskService.setTaskStatus(id, TaskStatus.done);
+      const { error, task } = await TaskService.setTaskStatus(id, TaskStatus.done, userId);
 
       if (error) {
         if (!task) {
           return this.notFound(res, error);
+        }
+
+        if (error instanceof ForbiddenResource) {
+          return this.forbidden(res, error);
         }
 
         return this.badRequest(res, error);
@@ -129,12 +157,17 @@ class TaskController extends BaseController {
       const id = req.params.id;
       const text = req.body.text;
       const tagIds = req.body.tags;
+      const userId = Number(res.locals.userId);
 
       const taskData = new Task({ text });
 
-      const { error, task } = await TaskService.updateTask(id, taskData, tagIds);
+      const { error, task } = await TaskService.updateTask(id, taskData, userId, tagIds);
 
       if (error) {
+        if (error instanceof ForbiddenResource) {
+          return this.forbidden(res, error);
+        }
+
         return this.badRequest(res, error);
       }
 

@@ -16,10 +16,12 @@ export const verifyToken = (req: Request, res: Response, next: NextFunction) => 
     return res.status(401).json({ error: new InvalidAccessToken() });
   }
 
-  return verify(token, TOKENS_CONFIG.SECRET, (error) => {
-    if (error) {
+  return verify(token, TOKENS_CONFIG.SECRET, (error, decoded) => {
+    if (error || typeof decoded === 'string') {
       return res.status(401).json({ error: new InvalidAccessToken() });
     }
+
+    req.params.userId = decoded?.userId;
 
     return next();
   });

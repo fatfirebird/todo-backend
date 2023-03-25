@@ -1,4 +1,4 @@
-import { HttpError } from '@/core/error';
+import { HttpError } from '@/core/errors';
 import { TagModel } from '@/database/models';
 import { InvalidTagIdsError } from '../tag/tag-error';
 import { TagRepository } from '../tag/tag-repository';

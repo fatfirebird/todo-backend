@@ -1,4 +1,4 @@
-import { HttpError } from '@/core/error';
+import { HttpError } from '@/core/errors';
 import { TaskStatus } from './task-entity';
 
 export class TaskNotFoundError extends HttpError {

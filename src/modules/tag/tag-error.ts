@@ -1,4 +1,4 @@
-import { HttpError } from '@/core/error';
+import { HttpError } from '@/core/errors';
 
 export class TagNotFoundError extends HttpError {
   constructor(id: number | string) {

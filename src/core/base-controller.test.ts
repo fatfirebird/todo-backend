@@ -1,7 +1,7 @@
 import { Response as ExpressResponse } from 'express';
 import { BaseController } from './base-controller';
 import { Response } from 'jest-express/lib/response';
-import { HttpError } from './error';
+import { HttpError } from './errors';
 
 class MockController extends BaseController {
   constructor() {

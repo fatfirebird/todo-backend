@@ -1,4 +1,5 @@
 import { BaseController } from '@/core/base-controller';
+import { ForbiddenResource } from '@/core/errors';
 import { omit } from '@/core/omit';
 import { Response, Request } from 'express';
 import { User } from './user-entity';
@@ -10,11 +11,16 @@ class UserController extends BaseController {
   async getUserById(req: Request, res: Response) {
     try {
       const id = req.params.id;
+      const userId = Number(req.params.userId);
 
       const user = await UserRepository.findUserById(id);
 
       if (!user) {
         return this.notFound(res, new UserNotFoundError(id));
+      }
+
+      if (user.id !== userId) {
+        return this.forbidden(res, new ForbiddenResource());
       }
 
       return this.ok(res, user);

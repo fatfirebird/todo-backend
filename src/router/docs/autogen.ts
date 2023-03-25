@@ -1,5 +1,5 @@
 import 'module-alias/register';
-import { HttpError } from '../../core/error';
+import { HttpError } from '../../core/errors';
 import createSwaggerAutogen from 'swagger-autogen';
 import { Meta } from '../../core/meta';
 import { TaskStatus } from '@/modules/task/task-entity';

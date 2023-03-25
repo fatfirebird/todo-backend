@@ -16,10 +16,12 @@ import {
   NonAttribute,
   Association,
   DataTypes,
+  ForeignKey,
 } from 'sequelize';
 import { TaskStatus } from '@/modules/task/task-entity';
 import { sequelize } from '../config';
 import { TagModel } from './tag-model';
+import { UserModel } from './user-model';
 
 class TaskModel extends Model<
   InferAttributes<TaskModel, { omit: 'tags' }>,
@@ -28,6 +30,7 @@ class TaskModel extends Model<
   declare id: CreationOptional<number>;
   declare text: string;
   declare status: CreationOptional<TaskStatus>;
+  declare userId: ForeignKey<UserModel['id']>;
 
   declare getTags: BelongsToManyGetAssociationsMixin<TagModel>;
   declare addTag: BelongsToManyAddAssociationMixin<TagModel, number>;

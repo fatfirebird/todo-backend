@@ -3,7 +3,7 @@ import { createValidator } from './create-validator';
 import { Request } from 'jest-express/lib/request';
 import { Response } from 'jest-express/lib/response';
 import { Request as ExpressRequest, Response as ExpressResponse } from 'express';
-import { HttpError } from '../error';
+import { HttpError } from '../errors';
 
 describe('test create-validator', () => {
   afterEach(() => {

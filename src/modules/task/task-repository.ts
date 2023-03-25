@@ -16,20 +16,21 @@ class TaskRepository {
     return task;
   }
 
-  static async findAllTasks({ offset, limit }: Meta, filters: TaskListFilters, order: Order) {
+  static async findAllTasks({ offset, limit }: Meta, filters: TaskListFilters, order: Order, userId: number) {
     return TaskModel.findAndCountAll({
       offset,
       limit,
       where: {
         ...filters,
+        userId,
       },
       order: [['id', order.id]],
       include: TagModel,
     });
   }
 
-  static async createNewTask({ data }: Task) {
-    return await TaskModel.create({ ...data });
+  static async createNewTask({ data }: Task, userId: number) {
+    return await TaskModel.create({ ...data, userId });
   }
 
   static async deleteTask(id: string) {

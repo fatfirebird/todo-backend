@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { HttpError } from './error';
+import { HttpError } from './errors';
 
 export abstract class BaseController {
   private sendError(res: Response, code: number, error: HttpError) {
@@ -20,6 +20,10 @@ export abstract class BaseController {
 
   protected notFound(res: Response, error: HttpError) {
     return this.sendError(res, 404, error);
+  }
+
+  protected forbidden(res: Response, error: HttpError) {
+    return this.sendError(res, 403, error);
   }
 
   protected internalError(res: Response, error?: HttpError) {

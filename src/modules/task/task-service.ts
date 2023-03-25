@@ -1,4 +1,4 @@
-import { HttpError } from '@/core/error';
+import { ForbiddenResource, HttpError } from '@/core/errors';
 import { TagModel } from '@/database/models';
 import { InvalidTagIdsError } from '../tag/tag-error';
 import { TagRepository } from '../tag/tag-repository';
@@ -15,24 +15,24 @@ class TaskService {
     return status === TaskStatus.inProgress;
   }
 
-  static async createTask(taskData: Task, tagIds: number[]) {
+  static async createTask(taskData: Task, tagIds: number[], userId: number) {
     let error: HttpError | null = null;
 
-    const tags = await TagRepository.findAllByIds(tagIds);
+    const tags = await TagRepository.findAllByIds(tagIds, userId);
 
     if (!tags.length && tagIds.length) {
       error = new InvalidTagIdsError(tagIds);
       return { error, task: null };
     }
 
-    const task = await TaskRepository.createNewTask(taskData);
+    const task = await TaskRepository.createNewTask(taskData, userId);
     await task.addTags(tags);
     await task.reload({ include: TagModel });
 
     return { task, error };
   }
 
-  static async updateTask(taskId: string, taskData: Task, tagIds?: number[]) {
+  static async updateTask(taskId: string, taskData: Task, userId: number, tagIds?: number[]) {
     let error: HttpError | null = null;
     const hasTagIds = Array.isArray(tagIds);
 
@@ -43,11 +43,16 @@ class TaskService {
       return { error, task, tags: null };
     }
 
+    if (task.userId !== userId) {
+      error = new ForbiddenResource();
+      return { error, task, tags: null };
+    }
+
     if (!hasTagIds) {
       return { error, task, tags: null };
     }
 
-    const tags = await TagRepository.findAllByIds(tagIds);
+    const tags = await TagRepository.findAllByIds(tagIds, userId);
     const tagsFound = !!tags.length;
 
     if (!tagsFound && !!tagIds.length) {
@@ -67,13 +72,17 @@ class TaskService {
     return { task, error, tags };
   }
 
-  static async setTaskStatus(id: string, status: TaskStatus) {
+  static async setTaskStatus(id: string, status: TaskStatus, userId: number) {
     let error: HttpError | null = null;
 
     const task = await TaskRepository.findTaskById(id);
 
     if (!task) {
       return { task, error: new TaskNotFoundError(id) };
+    }
+
+    if (task.userId !== userId) {
+      return { task, error: new ForbiddenResource() };
     }
 
     switch (status) {

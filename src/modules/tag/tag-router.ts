@@ -4,18 +4,27 @@ import { paramValidationSchema } from '@/core/validation';
 import { tagController } from './tag-contoller';
 import { tagBodyValidation } from './tag-validation';
 import { GetTagListQueryParams } from './tag.types';
+import { verifyToken } from '../auth/middleware/verify-token';
 
 const tagRouter = Router();
 
+tagRouter.use(verifyToken);
+
 tagRouter.get('/', (req, res) =>
   // #swagger.tags = ['tag']
-  /* #swagger.parameters['obj'] = { 
+  /* #swagger.parameters['obj'] = {
             in: 'query',  
             schema: { $ref: '#/definitions/GetTagListQueryParams' } 
   } */
+  /* #swagger.security = [{
+    "bearerAuth": []
+  }] */
   /* #swagger.responses[200] = {
             schema: { $ref: '#/definitions/TagList' }
     } */
+  /* #swagger.responses[401] = {
+        schema: { $ref: '#/definitions/Error' }
+} */
   /* #swagger.responses[500] = {
             schema: { $ref: '#/definitions/Error' }
     } */
@@ -23,12 +32,18 @@ tagRouter.get('/', (req, res) =>
 );
 tagRouter.post('/', createValidator([...tagBodyValidation, ...tagBodyValidation]), (req, res) =>
   // #swagger.tags = ['tag']
+  /* #swagger.security = [{
+    "bearerAuth": []
+  }] */
   /* #swagger.responses[200] = {
             schema: { $ref: '#/definitions/Tag' }
     } */
   /* #swagger.responses[400] = {
             schema: { $ref: '#/definitions/ValidationError' }
     } */
+  /* #swagger.responses[401] = {
+        schema: { $ref: '#/definitions/Error' }
+} */
   /* #swagger.responses[500] = {
             schema: { $ref: '#/definitions/Error' }
     } */
@@ -36,12 +51,21 @@ tagRouter.post('/', createValidator([...tagBodyValidation, ...tagBodyValidation]
 );
 tagRouter.get('/:id', createValidator(paramValidationSchema), (req, res) =>
   // #swagger.tags = ['tag']
+  /* #swagger.security = [{
+    "bearerAuth": []
+  }] */
   /* #swagger.responses[200] = {
             schema: { $ref: '#/definitions/Tag' }
     } */
   /* #swagger.responses[400] = {
             schema: { $ref: '#/definitions/ValidationError' }
     } */
+  /* #swagger.responses[401] = {
+        schema: { $ref: '#/definitions/Error' }
+} */
+  /* #swagger.responses[403] = {
+        schema: { $ref: '#/definitions/Error' }
+} */
   /* #swagger.responses[404] = {
             schema: { $ref: '#/definitions/Error' }
     } */
@@ -52,10 +76,19 @@ tagRouter.get('/:id', createValidator(paramValidationSchema), (req, res) =>
 );
 tagRouter.delete('/:id', createValidator(paramValidationSchema), (req, res) =>
   // #swagger.tags = ['tag']
+  /* #swagger.security = [{
+    "bearerAuth": []
+  }] */
   /* #swagger.responses[201] = {}
   /* #swagger.responses[400] = {
             schema: { $ref: '#/definitions/ValidationError' }
     } */
+  /* #swagger.responses[401] = {
+        schema: { $ref: '#/definitions/Error' }
+} */
+  /* #swagger.responses[403] = {
+        schema: { $ref: '#/definitions/Error' }
+} */
   /* #swagger.responses[404] = {
             schema: { $ref: '#/definitions/Error' }
     } */
@@ -66,12 +99,21 @@ tagRouter.delete('/:id', createValidator(paramValidationSchema), (req, res) =>
 );
 tagRouter.patch('/:id', createValidator([...paramValidationSchema, ...tagBodyValidation]), (req, res) =>
   // #swagger.tags = ['tag']
+  /* #swagger.security = [{
+    "bearerAuth": []
+  }] */
   /* #swagger.responses[200] = {
             schema: { $ref: '#/definitions/Tag' }
     } */
   /* #swagger.responses[400] = {
             schema: { $ref: '#/definitions/ValidationError' }
     } */
+  /* #swagger.responses[401] = {
+        schema: { $ref: '#/definitions/Error' }
+} */
+  /* #swagger.responses[403] = {
+        schema: { $ref: '#/definitions/Error' }
+} */
   /* #swagger.responses[404] = {
             schema: { $ref: '#/definitions/Error' }
     } */

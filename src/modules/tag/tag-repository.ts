@@ -4,20 +4,24 @@ import { TagModel } from '@/database/models';
 import { Tag } from './tag-entity';
 
 class TagRepository {
-  static async findAllByIds(ids: number[]) {
+  static async findAllByIds(ids: number[], userId: number) {
     return await TagModel.findAll({
       where: {
         id: {
           [Op.in]: ids,
         },
+        userId,
       },
     });
   }
 
-  static async findAll(meta: Meta) {
+  static async findAll(meta: Meta, userId: number) {
     return await TagModel.findAndCountAll({
       offset: meta.offset,
       limit: meta.limit,
+      where: {
+        userId,
+      },
     });
   }
 
@@ -29,8 +33,8 @@ class TagRepository {
     });
   }
 
-  static async createTag({ data }: Tag) {
-    return await TagModel.create(data);
+  static async createTag({ data }: Tag, userId: number) {
+    return await TagModel.create({ ...data, userId });
   }
 
   static async deleteTag(id: string) {
@@ -39,18 +43,6 @@ class TagRepository {
         id,
       },
     });
-  }
-
-  static async updateTag(tagData: Partial<Tag>, id: string) {
-    const tag = await this.findTagByID(id);
-
-    if (!tag) {
-      return null;
-    }
-
-    await tag.update({ color: tagData.color, name: tagData.name });
-
-    return tag;
   }
 }
 

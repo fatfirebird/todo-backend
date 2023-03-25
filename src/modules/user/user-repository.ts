@@ -1,4 +1,4 @@
-import { UserModel } from '@/database/models/user-model';
+import { UserModel } from '@/database/models';
 
 class UserRepository {
   static async findUserById(id: string) {

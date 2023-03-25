@@ -3,10 +3,9 @@ import { HttpError } from '../../core/errors';
 import createSwaggerAutogen from 'swagger-autogen';
 import { Meta } from '../../core/meta';
 import { TaskStatus } from '@/modules/task/task-entity';
-import { TagModel, TaskModel } from '@/database/models';
+import { TagModel, TaskModel, UserModel } from '@/database/models';
 import { GetTaskListQueryParams } from '@/modules/task/task-types';
 import { GetTagListQueryParams } from '@/modules/tag/tag.types';
-import { UserModel } from '@/database/models/user-model';
 import { omit } from '@/core/omit';
 
 const swaggerAutogen = createSwaggerAutogen({

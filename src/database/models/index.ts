@@ -4,8 +4,6 @@ import { TagModel } from './tag-model';
 import { TaskModel } from './task-model';
 import { UserModel } from './user-model';
 
-UserModel.hasOne(AuthModel);
-AuthModel.belongsTo(UserModel);
 UserModel.hasMany(TaskModel);
 TaskModel.belongsTo(UserModel);
 UserModel.hasMany(TagModel);
@@ -15,4 +13,4 @@ TagModel.belongsToMany(TaskModel, { through: 'taskTags' });
 
 sequelize.sync({ alter: true, force: true });
 
-export { TagModel, TaskModel };
+export { TagModel, TaskModel, AuthModel, UserModel };

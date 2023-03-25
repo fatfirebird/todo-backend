@@ -1,11 +1,9 @@
-import { Model, InferAttributes, InferCreationAttributes, CreationOptional, DataTypes, ForeignKey } from 'sequelize';
+import { Model, InferAttributes, InferCreationAttributes, CreationOptional, DataTypes } from 'sequelize';
 import { sequelize } from '../config';
-import { UserModel } from './user-model';
 
 class AuthModel extends Model<InferAttributes<AuthModel>, InferCreationAttributes<AuthModel>> {
   declare id: CreationOptional<number>;
   declare refresh: string;
-  declare userId: ForeignKey<UserModel['id']>;
 }
 
 AuthModel.init(

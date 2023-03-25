@@ -1,5 +1,5 @@
 import { TOKENS_CONFIG } from '@/config/tokens';
-import { AuthModel } from '@/database/models/auth-model';
+import { AuthModel } from '@/database/models';
 import { sign, verify } from 'jsonwebtoken';
 import { CreationTokenError, InvalidRefreshToken } from './auth-error';
 
@@ -7,14 +7,14 @@ export class AuthService {
   static async createToken(userId: number) {
     try {
       const accessToken = sign({ userId }, TOKENS_CONFIG.SECRET, {
-        expiresIn: '10m',
+        expiresIn: TOKENS_CONFIG.ACCESS_TOKEN_EXPIRES_IN,
       });
 
       const refreshToken = sign({ userId }, TOKENS_CONFIG.SECRET, {
-        expiresIn: '24h',
+        expiresIn: TOKENS_CONFIG.REFRES_TOKEN_EXPIRES_IN,
       });
 
-      await AuthModel.create({ refresh: refreshToken, userId });
+      await AuthModel.create({ refresh: refreshToken });
 
       return { accessToken, refreshToken };
     } catch (error) {
@@ -32,7 +32,6 @@ export class AuthService {
 
       const oldToken = await AuthModel.findOne({
         where: {
-          userId: decoded.userId,
           refresh: refresh,
         },
       });

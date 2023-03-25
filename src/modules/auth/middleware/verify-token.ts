@@ -17,11 +17,11 @@ export const verifyToken = (req: Request, res: Response, next: NextFunction) => 
   }
 
   return verify(token, TOKENS_CONFIG.SECRET, (error, decoded) => {
-    if (error || typeof decoded === 'string') {
+    if (error || typeof decoded === 'string' || !decoded?.userId) {
       return res.status(401).json({ error: new InvalidAccessToken() });
     }
 
-    req.params.userId = decoded?.userId;
+    res.locals.userId = decoded?.userId;
 
     return next();
   });

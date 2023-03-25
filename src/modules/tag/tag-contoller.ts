@@ -5,6 +5,7 @@ import { Tag } from './tag-entity';
 import { TagNotFoundError } from './tag-error';
 import { TagRepository } from './tag-repository';
 import { GetTagListQueryParams } from './tag.types';
+import { ForbiddenResource } from '@/core/errors';
 
 class TagController extends BaseController {
   constructor() {
@@ -14,8 +15,9 @@ class TagController extends BaseController {
   async getTagList(req: Request<unknown, unknown, unknown, GetTagListQueryParams>, res: Response) {
     try {
       const meta = new Meta({ offset: req.query.offset, limit: req.query.limit });
+      const userId = Number(res.locals.userId);
 
-      const tags = await TagRepository.findAll(meta);
+      const tags = await TagRepository.findAll(meta, userId);
 
       return this.ok(res, { tags: tags.rows, meta: { ...meta, count: tags.count } });
     } catch (error) {
@@ -26,10 +28,16 @@ class TagController extends BaseController {
   async getTag(req: Request, res: Response) {
     try {
       const id = req.params.id;
+      const userId = Number(res.locals.userId);
+
       const tag = await TagRepository.findTagByID(id);
 
       if (!tag) {
         return this.notFound(res, new TagNotFoundError(id));
+      }
+
+      if (tag?.userId !== userId) {
+        return this.forbidden(res, new ForbiddenResource());
       }
 
       return this.ok(res, tag.toJSON());
@@ -41,9 +49,10 @@ class TagController extends BaseController {
   async createTag(req: Request, res: Response) {
     try {
       const { name, color } = req.body;
+      const userId = Number(res.locals.userId);
 
       const tagData = new Tag({ name, color });
-      const tag = await TagRepository.createTag(tagData);
+      const tag = await TagRepository.createTag(tagData, userId);
 
       return this.ok(res, tag.toJSON());
     } catch (error) {
@@ -54,12 +63,19 @@ class TagController extends BaseController {
   async deleteTag(req: Request, res: Response) {
     try {
       const id = req.params.id;
+      const userId = Number(res.locals.userId);
 
-      const deletedTags = await TagRepository.deleteTag(id);
+      const tag = await TagRepository.findTagByID(id);
 
-      if (!deletedTags) {
+      if (!tag) {
         return this.notFound(res, new TagNotFoundError(id));
       }
+
+      if (tag.userId !== userId) {
+        return this.forbidden(res, new ForbiddenResource());
+      }
+
+      await tag.destroy();
 
       return this.ok(res);
     } catch (error) {
@@ -71,13 +87,20 @@ class TagController extends BaseController {
     try {
       const id = req.params.id;
       const { name, color } = req.body;
+      const userId = Number(res.locals.userId);
 
       const tagData = new Tag({ name, color });
-      const tag = await TagRepository.updateTag(tagData, id);
+      const tag = await TagRepository.findTagByID(id);
 
       if (!tag) {
         return this.notFound(res, new TagNotFoundError(id));
       }
+
+      if (tag.userId !== userId) {
+        return this.forbidden(res, new ForbiddenResource());
+      }
+
+      await tag.update({ color: tagData.color, name: tagData.name });
 
       return this.ok(res, tag.toJSON());
     } catch (error) {

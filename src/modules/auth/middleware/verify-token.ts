@@ -4,7 +4,7 @@ import { verify } from 'jsonwebtoken';
 import { TOKENS_CONFIG } from '@/config/tokens';
 
 export const verifyToken = (req: Request, res: Response, next: NextFunction) => {
-  const authorization = req.headers.authorization;
+  const { authorization } = req.headers;
 
   if (!authorization) {
     return res.status(401).json({ error: new InvalidAccessToken() });

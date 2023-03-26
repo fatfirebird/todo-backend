@@ -1,10 +1,10 @@
 import { ForbiddenResource, HttpError } from '@/core/errors';
-import { TagModel } from '@/database/models';
+import { db } from '@/database/models';
 import { InvalidTagIdsError } from '../tag/tag-error';
-import { TagRepository } from '../tag/tag-repository';
+import { tagRepository } from '../tag/tag-repository';
 import { Task, TaskStatus } from './task-entity';
 import { TaskNotFoundError, TaskWrongStatusError } from './task-error';
-import { TaskRepository } from './task-repository';
+import { taskRepository } from './task-repository';
 
 class TaskService {
   protected static isTodo(status: TaskStatus) {
@@ -18,16 +18,18 @@ class TaskService {
   static async createTask(taskData: Task, tagIds: number[], userId: number) {
     let error: HttpError | null = null;
 
-    const tags = await TagRepository.findAllByIds(tagIds, userId);
+    const tags = await tagRepository.findAllByIds(tagIds, userId);
 
     if (!tags.length && tagIds.length) {
       error = new InvalidTagIdsError(tagIds);
       return { error, task: null };
     }
 
-    const task = await TaskRepository.createNewTask(taskData, userId);
+    const task = await taskRepository.createNewTask(taskData, userId);
+    console.log('AAAAAAAAAAAAA', task);
     await task.addTags(tags);
-    await task.reload({ include: TagModel });
+    console.log('FFFFFFFFFFFFFFFFFF', task);
+    await task.reload({ include: db.tag });
 
     return { task, error };
   }
@@ -36,7 +38,7 @@ class TaskService {
     let error: HttpError | null = null;
     const hasTagIds = Array.isArray(tagIds);
 
-    const task = await TaskRepository.updateTaskText(taskId, taskData.text);
+    const task = await taskRepository.updateTaskText(taskId, taskData.text);
 
     if (!task) {
       error = new TaskNotFoundError(taskId);
@@ -52,7 +54,7 @@ class TaskService {
       return { error, task, tags: null };
     }
 
-    const tags = await TagRepository.findAllByIds(tagIds, userId);
+    const tags = await tagRepository.findAllByIds(tagIds, userId);
     const tagsFound = !!tags.length;
 
     if (!tagsFound && !!tagIds.length) {
@@ -67,7 +69,7 @@ class TaskService {
       await task.removeTags(taskTags);
     }
 
-    await task.reload({ include: TagModel });
+    await task.reload({ include: db.tag });
 
     return { task, error, tags };
   }
@@ -75,7 +77,7 @@ class TaskService {
   static async setTaskStatus(id: string, status: TaskStatus, userId: number) {
     let error: HttpError | null = null;
 
-    const task = await TaskRepository.findTaskById(id);
+    const task = await taskRepository.findTaskById(id);
 
     if (!task) {
       return { task, error: new TaskNotFoundError(id) };

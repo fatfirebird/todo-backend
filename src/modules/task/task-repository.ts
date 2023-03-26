@@ -1,23 +1,29 @@
 import { Meta } from '@/core/meta';
 import { Order } from '@/core/order';
-import { TagModel, TaskModel } from '@/database/models';
+import { db, Models } from '@/database/models';
 import { Task, TaskStatus } from './task-entity';
 import { TaskListFilters } from './task-types';
 
 class TaskRepository {
-  static async findTaskById(id: string) {
-    const task = await TaskModel.findOne({
+  models: Models;
+
+  constructor(models: Models) {
+    this.models = models;
+  }
+
+  async findTaskById(id: string) {
+    const task = await this.models.task.findOne({
       where: {
         id,
       },
-      include: TagModel,
+      include: this.models.tag,
     });
 
     return task;
   }
 
-  static async findAllTasks({ offset, limit }: Meta, filters: TaskListFilters, order: Order, userId: number) {
-    return TaskModel.findAndCountAll({
+  async findAllTasks({ offset, limit }: Meta, filters: TaskListFilters, order: Order, userId: number) {
+    return await this.models.task.findAndCountAll({
       offset,
       limit,
       where: {
@@ -25,23 +31,23 @@ class TaskRepository {
         userId,
       },
       order: [['id', order.id]],
-      include: TagModel,
+      include: this.models.tag,
     });
   }
 
-  static async createNewTask({ data }: Task, userId: number) {
-    return await TaskModel.create({ ...data, userId });
+  async createNewTask({ data }: Task, userId: number) {
+    return await this.models.task.create({ ...data, userId });
   }
 
-  static async deleteTask(id: string) {
-    return await TaskModel.destroy({
+  async deleteTask(id: string) {
+    return await this.models.task.destroy({
       where: {
         id,
       },
     });
   }
 
-  static async updateTaskText(id: string, text: string) {
+  async updateTaskText(id: string, text: string) {
     const task = await this.findTaskById(id);
 
     if (!task) {
@@ -51,8 +57,8 @@ class TaskRepository {
     return await task.update({ text });
   }
 
-  static async updateTaskStatus(id: string, status: TaskStatus) {
-    return await TaskModel.update(
+  async updateTaskStatus(id: string, status: TaskStatus) {
+    return await this.models.task.update(
       { status },
       {
         where: {
@@ -63,4 +69,6 @@ class TaskRepository {
   }
 }
 
-export { TaskRepository };
+const taskRepository = new TaskRepository(db);
+
+export { taskRepository };

@@ -3,7 +3,7 @@ import { BaseController } from '@/core/base-controller';
 import { Meta } from '@/core/meta';
 import { Tag } from './tag-entity';
 import { TagNotFoundError } from './tag-error';
-import { TagRepository } from './tag-repository';
+import { tagRepository } from './tag-repository';
 import { GetTagListQueryParams } from './tag.types';
 import { ForbiddenResource } from '@/core/errors';
 
@@ -17,7 +17,7 @@ class TagController extends BaseController {
       const meta = new Meta({ offset: req.query.offset, limit: req.query.limit });
       const userId = Number(res.locals.userId);
 
-      const tags = await TagRepository.findAll(meta, userId);
+      const tags = await tagRepository.findAll(meta, userId);
 
       return this.ok(res, { tags: tags.rows, meta: { ...meta, count: tags.count } });
     } catch (error) {
@@ -30,7 +30,7 @@ class TagController extends BaseController {
       const id = req.params.id;
       const userId = Number(res.locals.userId);
 
-      const tag = await TagRepository.findTagByID(id);
+      const tag = await tagRepository.findTagByID(id);
 
       if (!tag) {
         return this.notFound(res, new TagNotFoundError(id));
@@ -52,7 +52,7 @@ class TagController extends BaseController {
       const userId = Number(res.locals.userId);
 
       const tagData = new Tag({ name, color });
-      const tag = await TagRepository.createTag(tagData, userId);
+      const tag = await tagRepository.createTag(tagData, userId);
 
       return this.ok(res, tag.toJSON());
     } catch (error) {
@@ -65,7 +65,7 @@ class TagController extends BaseController {
       const id = req.params.id;
       const userId = Number(res.locals.userId);
 
-      const tag = await TagRepository.findTagByID(id);
+      const tag = await tagRepository.findTagByID(id);
 
       if (!tag) {
         return this.notFound(res, new TagNotFoundError(id));
@@ -90,7 +90,7 @@ class TagController extends BaseController {
       const userId = Number(res.locals.userId);
 
       const tagData = new Tag({ name, color });
-      const tag = await TagRepository.findTagByID(id);
+      const tag = await tagRepository.findTagByID(id);
 
       if (!tag) {
         return this.notFound(res, new TagNotFoundError(id));

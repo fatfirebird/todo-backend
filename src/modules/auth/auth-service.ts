@@ -1,7 +1,7 @@
 import { TOKENS_CONFIG } from '@/config/tokens';
-import { AuthModel } from '@/database/models';
 import { sign, verify } from 'jsonwebtoken';
 import { CreationTokenError, InvalidRefreshToken } from './auth-error';
+import { authRepository } from './auth-repository';
 
 export class AuthService {
   static async createToken(userId: number) {
@@ -14,7 +14,7 @@ export class AuthService {
         expiresIn: TOKENS_CONFIG.REFRES_TOKEN_EXPIRES_IN,
       });
 
-      await AuthModel.create({ refresh: refreshToken });
+      await authRepository.create(refreshToken);
 
       return { accessToken, refreshToken };
     } catch (error) {
@@ -30,11 +30,7 @@ export class AuthService {
         return { refreshToken: null, accessToken: null, error: new InvalidRefreshToken() };
       }
 
-      const oldToken = await AuthModel.findOne({
-        where: {
-          refresh: refresh,
-        },
-      });
+      const oldToken = await authRepository.findOne(refresh);
 
       if (!oldToken) {
         return { refreshToken: null, accessToken: null, error: new InvalidRefreshToken() };

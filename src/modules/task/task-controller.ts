@@ -2,7 +2,7 @@ import { Response, Request } from 'express';
 import { BaseController } from '@/core/base-controller';
 import { Task, TaskStatus } from './task-entity';
 import { TaskNotFoundError } from './task-error';
-import { TaskRepository } from './task-repository';
+import { taskRepository } from './task-repository';
 import { TaskService } from './task-service';
 import { GetTaskListQueryParams } from './task-types';
 import { ForbiddenResource } from '@/core/errors';
@@ -17,7 +17,7 @@ class TaskController extends BaseController {
       const id = req.params.id;
       const userId = Number(res.locals.userId);
 
-      const task = await TaskRepository.findTaskById(id);
+      const task = await taskRepository.findTaskById(id);
 
       if (!task) {
         return this.notFound(res, new TaskNotFoundError(id));
@@ -51,7 +51,7 @@ class TaskController extends BaseController {
 
       const userId = Number(res.locals.userId);
 
-      const tasks = await TaskRepository.findAllTasks(meta, filters, order, userId);
+      const tasks = await taskRepository.findAllTasks(meta, filters, order, userId);
 
       return this.ok(res, { tasks: tasks.rows, meta: { ...meta, count: tasks.count } });
     } catch (error) {
@@ -84,7 +84,7 @@ class TaskController extends BaseController {
       const id = req.params.id;
       const userId = Number(res.locals.userId);
 
-      const task = await TaskRepository.findTaskById(id);
+      const task = await taskRepository.findTaskById(id);
 
       if (!task) {
         return this.notFound(res, new TaskNotFoundError(id));

@@ -4,7 +4,7 @@ import { omit } from '@/core/omit';
 import { Response, Request } from 'express';
 import { User } from './user-entity';
 import { UserNotFoundError } from './user-error';
-import { UserRepository } from './user-repository';
+import { userRepository } from './user-repository';
 import { UserService } from './user-service';
 
 class UserController extends BaseController {
@@ -17,7 +17,7 @@ class UserController extends BaseController {
         return this.forbidden(res, new ForbiddenResource());
       }
 
-      const user = await UserRepository.findUserById(id);
+      const user = await userRepository.findUserById(id);
 
       if (!user) {
         return this.notFound(res, new UserNotFoundError(id));

@@ -17,13 +17,13 @@ import {
   Association,
   DataTypes,
   ForeignKey,
+  Sequelize,
 } from 'sequelize';
 import { TaskStatus } from '@/modules/task/task-entity';
-import { sequelize } from '../config';
 import { TagModel } from './tag-model';
 import { UserModel } from './user-model';
 
-class TaskModel extends Model<
+export class TaskModel extends Model<
   InferAttributes<TaskModel, { omit: 'tags' }>,
   InferCreationAttributes<TaskModel, { omit: 'tags' }>
 > {
@@ -50,28 +50,30 @@ class TaskModel extends Model<
   };
 }
 
-TaskModel.init(
-  {
-    id: {
-      type: DataTypes.INTEGER.UNSIGNED,
-      autoIncrement: true,
-      primaryKey: true,
+export const init = (sequelize: Sequelize) => {
+  TaskModel.init(
+    {
+      id: {
+        type: DataTypes.INTEGER.UNSIGNED,
+        autoIncrement: true,
+        primaryKey: true,
+      },
+      text: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      status: {
+        type: DataTypes.ENUM,
+        defaultValue: TaskStatus.todo,
+        values: [TaskStatus.todo, TaskStatus.inProgress, TaskStatus.done],
+      },
     },
-    text: {
-      type: DataTypes.STRING,
-      allowNull: false,
+    {
+      sequelize,
+      paranoid: true,
+      modelName: 'task',
     },
-    status: {
-      type: DataTypes.ENUM,
-      defaultValue: TaskStatus.todo,
-      values: [TaskStatus.todo, TaskStatus.inProgress, TaskStatus.done],
-    },
-  },
-  {
-    sequelize,
-    paranoid: true,
-    modelName: 'task',
-  },
-);
+  );
 
-export { TaskModel };
+  return TaskModel;
+};

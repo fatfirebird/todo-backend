@@ -38,3 +38,6 @@ yarn-error.log*
 *.vault_pass
 
 .npmrc
+
+data.sqlite3
+/*.session.sql

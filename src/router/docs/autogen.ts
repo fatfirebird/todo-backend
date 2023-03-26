@@ -1,12 +1,9 @@
-import 'module-alias/register';
 import { HttpError } from '../../core/errors';
 import createSwaggerAutogen from 'swagger-autogen';
 import { Meta } from '../../core/meta';
 import { TaskStatus } from '@/modules/task/task-entity';
-import { TagModel, TaskModel, UserModel } from '@/database/models';
 import { GetTaskListQueryParams } from '@/modules/task/task-types';
 import { GetTagListQueryParams } from '@/modules/tag/tag.types';
-import { omit } from '@/core/omit';
 
 const swaggerAutogen = createSwaggerAutogen({
   autoQuery: true,
@@ -22,12 +19,24 @@ const error = new HttpError({
 });
 
 const meta = { ...new Meta({ limit: 10, offset: 0 }), count: 20 };
-const tag = TagModel.build({ id: 1, color: 'red', name: 'important' }).toJSON();
-const task = TaskModel.build(
-  { id: 1, text: 'very important task', status: TaskStatus.todo },
-  { include: TagModel },
-).toJSON();
-const user = omit(UserModel.build({ id: 1, login: 'login', passwordHash: 'hash' }).toJSON(), ['passwordHash']);
+const tag = {
+  id: 1,
+  color: 'red',
+  name: 'important',
+  createdAt: '2023-03-26 13:58:20',
+  updatedAt: '2023-03-26 13:58:20',
+  deletedAt: null,
+};
+
+const task = { id: 1, text: 'very important task', status: TaskStatus.todo, tags: [tag] };
+
+const user = {
+  id: 1,
+  login: 'login',
+  createdAt: '2023-03-26 13:58:20',
+  updatedAt: '2023-03-26 13:58:20',
+  deletedAt: null,
+};
 
 const getTaskListQueryParams: GetTaskListQueryParams = {
   limit: 10,

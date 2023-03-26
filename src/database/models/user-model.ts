@@ -1,34 +1,35 @@
-import { Model, InferAttributes, InferCreationAttributes, CreationOptional, DataTypes } from 'sequelize';
-import { sequelize } from '../config';
+import { Model, InferAttributes, InferCreationAttributes, CreationOptional, DataTypes, Sequelize } from 'sequelize';
 
-class UserModel extends Model<InferAttributes<UserModel>, InferCreationAttributes<UserModel>> {
+export class UserModel extends Model<InferAttributes<UserModel>, InferCreationAttributes<UserModel>> {
   declare id: CreationOptional<number>;
   declare login: string;
   declare passwordHash: string;
 }
 
-UserModel.init(
-  {
-    id: {
-      type: DataTypes.INTEGER.UNSIGNED,
-      autoIncrement: true,
-      primaryKey: true,
+export const init = (sequelize: Sequelize) => {
+  UserModel.init(
+    {
+      id: {
+        type: DataTypes.INTEGER.UNSIGNED,
+        autoIncrement: true,
+        primaryKey: true,
+      },
+      login: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+      },
+      passwordHash: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
     },
-    login: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
+    {
+      sequelize,
+      paranoid: true,
+      modelName: 'user',
     },
-    passwordHash: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-  },
-  {
-    sequelize,
-    paranoid: true,
-    modelName: 'user',
-  },
-);
+  );
 
-export { UserModel };
+  return UserModel;
+};

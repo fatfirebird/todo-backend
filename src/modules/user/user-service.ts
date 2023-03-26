@@ -1,5 +1,5 @@
 import { User } from './user-entity';
-import { UserRepository } from './user-repository';
+import { userRepository } from './user-repository';
 import bcrypt from 'bcrypt';
 import { AuthService } from '../auth/auth-service';
 import { UserLoginUsed, InvalidPasswordOrLogin } from './user-error';
@@ -7,7 +7,7 @@ export class UserService {
   static async createUser(userData: User) {
     try {
       const hash = await bcrypt.hash(userData.password, 10);
-      const user = await UserRepository.createUser({ login: userData.login, passwordHash: hash });
+      const user = await userRepository.createUser({ login: userData.login, passwordHash: hash });
 
       const { error, ...data } = await AuthService.createToken(user.id);
 
@@ -32,7 +32,7 @@ export class UserService {
   }
 
   static async verifyPassword(userData: User) {
-    const user = await UserRepository.findUserByLogin(userData.login);
+    const user = await userRepository.findUserByLogin(userData.login);
 
     if (!user) {
       return {

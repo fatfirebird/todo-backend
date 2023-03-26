@@ -1,35 +1,44 @@
-import { Model, InferAttributes, InferCreationAttributes, CreationOptional, DataTypes, ForeignKey } from 'sequelize';
-import { sequelize } from '../config';
+import {
+  Model,
+  InferAttributes,
+  InferCreationAttributes,
+  CreationOptional,
+  DataTypes,
+  ForeignKey,
+  Sequelize,
+} from 'sequelize';
 import { UserModel } from './user-model';
 
-class TagModel extends Model<InferAttributes<TagModel>, InferCreationAttributes<TagModel>> {
+export class TagModel extends Model<InferAttributes<TagModel>, InferCreationAttributes<TagModel>> {
   declare id: CreationOptional<number>;
   declare name: string;
   declare color: string;
   declare userId: ForeignKey<UserModel['id']>;
 }
 
-TagModel.init(
-  {
-    id: {
-      type: DataTypes.INTEGER.UNSIGNED,
-      autoIncrement: true,
-      primaryKey: true,
+export const init = (sequelize: Sequelize) => {
+  TagModel.init(
+    {
+      id: {
+        type: DataTypes.INTEGER.UNSIGNED,
+        autoIncrement: true,
+        primaryKey: true,
+      },
+      name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      color: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
     },
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
+    {
+      sequelize,
+      paranoid: true,
+      modelName: 'tag',
     },
-    color: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-  },
-  {
-    sequelize,
-    paranoid: true,
-    modelName: 'tag',
-  },
-);
+  );
 
-export { TagModel };
+  return TagModel;
+};

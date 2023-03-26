@@ -1,11 +1,17 @@
 import { Op } from 'sequelize';
 import { Meta } from '@/core/meta';
-import { TagModel } from '@/database/models';
 import { Tag } from './tag-entity';
+import { db, Models } from '@/database/models';
 
 class TagRepository {
-  static async findAllByIds(ids: number[], userId: number) {
-    return await TagModel.findAll({
+  models: Models;
+
+  constructor(models: Models) {
+    this.models = models;
+  }
+
+  async findAllByIds(ids: number[], userId: number) {
+    return await this.models.tag.findAll({
       where: {
         id: {
           [Op.in]: ids,
@@ -15,8 +21,8 @@ class TagRepository {
     });
   }
 
-  static async findAll(meta: Meta, userId: number) {
-    return await TagModel.findAndCountAll({
+  async findAll(meta: Meta, userId: number) {
+    return await this.models.tag.findAndCountAll({
       offset: meta.offset,
       limit: meta.limit,
       where: {
@@ -25,20 +31,20 @@ class TagRepository {
     });
   }
 
-  static async findTagByID(id: string) {
-    return await TagModel.findOne({
+  async findTagByID(id: string) {
+    return await this.models.tag.findOne({
       where: {
         id,
       },
     });
   }
 
-  static async createTag({ data }: Tag, userId: number) {
-    return await TagModel.create({ ...data, userId });
+  async createTag({ data }: Tag, userId: number) {
+    return await this.models.tag.create({ ...data, userId });
   }
 
-  static async deleteTag(id: string) {
-    return await TagModel.destroy({
+  async deleteTag(id: string) {
+    return await this.models.tag.destroy({
       where: {
         id,
       },
@@ -46,4 +52,6 @@ class TagRepository {
   }
 }
 
-export { TagRepository };
+const tagRepository = new TagRepository(db);
+
+export { tagRepository };

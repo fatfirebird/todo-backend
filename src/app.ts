@@ -1,16 +1,14 @@
 import { APP_CONFIG } from './config/application';
 import express, { Express } from 'express';
-import * as dotenv from 'dotenv';
 import { routerV1 } from './router/v1';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import { sequelize } from './database/config';
+import { sequelize } from './database/models';
 
 export class App {
   private readonly app: Express;
 
   constructor() {
-    dotenv.config();
     this.app = express();
 
     this.app.use(bodyParser.json());

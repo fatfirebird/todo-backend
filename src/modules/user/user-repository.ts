@@ -1,8 +1,14 @@
-import { UserModel } from '@/database/models';
+import { db, Models } from '@/database/models';
 
 class UserRepository {
-  static async findUserById(id: string) {
-    return await UserModel.findOne({
+  models: Models;
+
+  constructor(models: Models) {
+    this.models = models;
+  }
+
+  async findUserById(id: string) {
+    return await this.models.user.findOne({
       where: {
         id,
       },
@@ -12,20 +18,22 @@ class UserRepository {
     });
   }
 
-  static async findUserByLogin(login: string) {
-    return await UserModel.findOne({
+  async findUserByLogin(login: string) {
+    return await this.models.user.findOne({
       where: {
         login,
       },
     });
   }
 
-  static async createUser({ login, passwordHash }: { login: string; passwordHash: string }) {
-    return await UserModel.create({
+  async createUser({ login, passwordHash }: { login: string; passwordHash: string }) {
+    return await this.models.user.create({
       login: login,
       passwordHash,
     });
   }
 }
 
-export { UserRepository };
+const userRepository = new UserRepository(db);
+
+export { userRepository };

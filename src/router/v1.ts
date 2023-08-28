@@ -9,10 +9,10 @@ import swaggerDoc from './docs/swagger.json';
 const routerV1 = Router();
 
 routerV1.use('/docs', serve);
-routerV1.get('/docs', setup(swaggerDoc));
+routerV1.get('/docs', setup(swaggerDoc) /* #swagger.ignore = true */);
+routerV1.use('/auth', authRouter);
 routerV1.use('/tasks', taskRouter);
 routerV1.use('/tags', tagRouter);
 routerV1.use('/users', userRouter);
-routerV1.use('/auth', authRouter);
 
 export { routerV1 };

@@ -4,10 +4,11 @@ import { Meta } from '../../core/meta';
 import { TaskStatus } from '@/modules/task/task-entity';
 import { GetTaskListQueryParams } from '@/modules/task/task-types';
 import { GetTagListQueryParams } from '@/modules/tag/tag.types';
+import path from 'path';
 
 const swaggerAutogen = createSwaggerAutogen({
   autoQuery: true,
-  autoHeaders: true,
+  autoHeaders: false,
   autoBody: true,
   openapi: '3.0.0',
 });
@@ -131,6 +132,6 @@ const doc = {
 };
 
 const outputFile = './swagger.json';
-const endpointsFiles = ['../../app.ts'];
+const endpointsFiles = [path.join(__dirname, '../../app')];
 
 swaggerAutogen(outputFile, endpointsFiles, doc);

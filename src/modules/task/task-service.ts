@@ -63,7 +63,7 @@ class TaskService {
     }
 
     if (tagsFound) {
-      await task.addTags(tags);
+      await task.setTags(tags);
     } else {
       const taskTags = await task.getTags();
       await task.removeTags(taskTags);

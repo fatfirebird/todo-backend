@@ -797,6 +797,92 @@
         ]
       }
     },
+    "/api/v1/tasks/{id}/status": {
+      "patch": {
+        "tags": [
+          "task"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangeTaskStatus"
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/tags/": {
       "get": {
         "tags": [
@@ -1905,6 +1991,18 @@
         },
         "xml": {
           "name": "GetTagListQueryParams"
+        }
+      },
+      "ChangeTaskStatus": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "string"
+          }
+        },
+        "xml": {
+          "name": "ChangeTaskStatus"
         }
       }
     },

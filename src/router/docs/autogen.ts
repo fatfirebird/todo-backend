@@ -128,6 +128,9 @@ const doc = {
     UserWithTokens: { user, ...tokens },
     GetTaskListQueryParams: getTaskListQueryParams,
     GetTagListQueryParams: getTagListQueryParams,
+    ChangeTaskStatus: {
+      status: 'string',
+    },
   },
 };
 

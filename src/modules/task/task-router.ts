@@ -6,6 +6,7 @@ import { validateUpdateTask } from './middleware/validate-update-task';
 import { paramValidationSchema } from '@/core/validation';
 import { validateCreateTask } from './middleware/validate-create-task';
 import { verifyToken } from '../auth/middleware/verify-token';
+import { statusValidationSchema } from './task-validation';
 
 const taskRouter = Router();
 
@@ -156,6 +157,39 @@ taskRouter.patch('/:id/done', createValidator(paramValidationSchema), (req, res)
             schema: { $ref: '#/definitions/Error' }
     } */
   taskController.doneTask(req, res),
+);
+taskRouter.patch(
+  '/:id/status',
+  createValidator([...statusValidationSchema, ...paramValidationSchema]),
+  (
+    req,
+    res,
+    // #swagger.tags = ['task']
+    /* #swagger.security = [{
+    "bearerAuth": []
+  }] */
+    /*  #swagger.requestBody = {
+            required: true,
+            content: {
+                "application/json": {
+                    schema: {
+                        $ref: "#/definitions/ChangeTaskStatus"
+                    }  
+                }
+            }
+        } 
+    */
+    /* #swagger.responses[201] = {}
+  /* #swagger.responses[400] = {
+            schema: { $ref: '#/definitions/ValidationError' }
+    } */
+    /* #swagger.responses[404] = {
+            schema: { $ref: '#/definitions/Error' }
+    } */
+    /* #swagger.responses[500] = {
+            schema: { $ref: '#/definitions/Error' }
+    } */
+  ) => taskController.setTaskStatus(req, res),
 );
 
 export { taskRouter };

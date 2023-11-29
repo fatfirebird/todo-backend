@@ -176,6 +176,33 @@ class TaskController extends BaseController {
       this.handleCatchError(res, error);
     }
   }
+
+  async setTaskStatus(req: Request, res: Response) {
+    try {
+      const status = req.body.status;
+      const id = req.params.id;
+
+      const userId = Number(res.locals.userId);
+
+      const { error, task } = await TaskService.setForcedStatus(id, status, userId);
+
+      if (error) {
+        if (!task) {
+          return this.notFound(res, error);
+        }
+
+        if (error instanceof ForbiddenResource) {
+          return this.forbidden(res, error);
+        }
+
+        return this.badRequest(res, error);
+      }
+
+      return this.ok(res);
+    } catch (error) {
+      this.handleCatchError(res, error);
+    }
+  }
 }
 
 const taskController = new TaskController();

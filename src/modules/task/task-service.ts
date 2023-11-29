@@ -15,6 +15,10 @@ class TaskService {
     return status === TaskStatus.inProgress;
   }
 
+  protected static isDone(status: TaskStatus) {
+    return status === TaskStatus.done;
+  }
+
   static async createTask(taskData: Task, tagIds: number[], userId: number) {
     let error: HttpError | null = null;
 
@@ -108,6 +112,30 @@ class TaskService {
       default:
         break;
     }
+
+    return { task, error };
+  }
+
+  static async setForcedStatus(id: string, status: TaskStatus, userId: number) {
+    const error: HttpError | null = null;
+
+    const task = await taskRepository.findTaskById(id);
+
+    if (!task) {
+      return { task, error: new TaskNotFoundError(id) };
+    }
+
+    if (task.userId !== userId) {
+      return { task, error: new ForbiddenResource() };
+    }
+
+    const isSameStatus = task.status === status;
+
+    if (isSameStatus) {
+      return { task, error: new TaskWrongStatusError(status, task.id) };
+    }
+
+    await task.update({ status });
 
     return { task, error };
   }

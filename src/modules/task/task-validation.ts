@@ -1,4 +1,5 @@
 import { checkSchema } from 'express-validator';
+import { TaskStatus } from './task-entity';
 
 export const textValidationSchema = checkSchema({
   text: {
@@ -25,3 +26,12 @@ export const createTagsArraySchema = (min = 0) =>
       },
     },
   });
+
+export const statusValidationSchema = checkSchema({
+  status: {
+    isIn: {
+      options: [[TaskStatus.todo, TaskStatus.inProgress, TaskStatus.done]],
+      errorMessage: 'Invalid status, should be todo or in progress or done',
+    },
+  },
+});
